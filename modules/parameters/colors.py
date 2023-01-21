@@ -31,5 +31,10 @@ COLORS = {
     "pi": PINK,
     "br": BROWN,
     "dg": DARK_GRAY,
-    "lg": LIGHT_GRAY
+    "lg": LIGHT_GRAY,
+
+    "SP": BLACK,
+    "TF": RED,
+    "TM": PURPLE,
+    "CL": YELLOW
 }

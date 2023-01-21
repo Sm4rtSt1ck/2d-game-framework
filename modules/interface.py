@@ -152,7 +152,7 @@ class ToggledButton(Button):
         color2: tuple = None,
         text2: str = None,
         text2_color: tuple = None,
-        font: tuple = None,
+        font: tuple = font_default,
         func=nothing,
         *args
     ) -> None:
@@ -260,8 +260,8 @@ class Table:
         coords: tuple,
         rows: int,
         cols: int,
-        labels: dict = {},
-        buttons: set = set()
+        labels: dict[str, Label] = {},
+        buttons: set[Button] = set()
     ) -> None:
         self.coords = (screenRes[0] * coords[0] / 100,
                        screenRes[1] * coords[1] / 100)

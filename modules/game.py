@@ -13,10 +13,14 @@ pygame.mixer.init()
 
 gameStatus: int
 currentMenu: Menu
+currentMap: level.Level
 
 
 def exitGame() -> None:
     exit()
+
+
+# Menu
 
 
 def goto_menu() -> None:
@@ -43,10 +47,6 @@ def goto_menu_editing() -> None:
     currentMenu = menu_editingLevelSelection
 
 
-def goto_menu_editing_levelSelection(level: str) -> None:
-    global currentMenu
-
-
 def goto_menu_options() -> None:
     global currentMenu
     currentMenu = menu_options
@@ -57,9 +57,36 @@ def goto_menu_levelSelection() -> None:
     currentMenu = menu_levelSelection
 
 
+# Editing
+
+
+def editing_saveChanges() -> None:
+    currentMap.saveChanges()
+    exitGame()
+
+
+def editing_changeTile(mousePos: tuple): currentMap.changeTile(mousePos)
+
+
+def editing_changeBrush():
+    currentMap.changeBrush()
+    currentMenu.labels["brush"].changeText(currentMap.brush)
+    currentMenu.labels["brush"].changeBackground(COLORS[currentMap.brush])
+
+
+def goto_edit(level_name: str) -> None:
+    global currentMap, currentMenu, gameStatus
+    currentMap = level.EditLevel(level_name)
+    currentMenu = menu_editing
+    gameStatus = 2
+
+
+# Other
+
+
 def goto_game(level_name: str) -> None:
     global gameStatus, currentMap, currentMenu, player, miniMap
-    currentMap = level.Level(level_name)
+    currentMap = level.World(level_name)
     miniMap = MiniMap(currentMap.matrix_terrain, (85, 0), 15, 150)
     currentMenu = menu_inGame
     player = entities.Player(coords=currentMap.spawn, maxHealth=100,
@@ -68,14 +95,9 @@ def goto_game(level_name: str) -> None:
     gameStatus = 1
 
 
-def goto_edit(level_name: str) -> None:
-    global currentMap, currentMenu
-    currentMenu = menu_editing
-
-
 def changeLevel(level_name: str) -> None:
     global currentMap, miniMap
-    currentMap = level.Level(level_name)
+    currentMap = level.World(level_name)
     miniMap = MiniMap(currentMap.matrix_terrain, (85, 0), 15, 150)
     player.x, player.y = currentMap.spawn
 
@@ -85,6 +107,10 @@ def apply_changes() -> None:
 
     saveChanges(fps=fps, screen_resolution=screenRes,
                 volume=volume, sensitivity=sensitivity)
+
+
+def exitGame() -> None:
+    apply_changes()
     quit()
 
 
@@ -122,7 +148,7 @@ def update(surface: pygame.Surface, keyboardKeys: set,
         match player.triggered[2]:
             case "0":
                 pass
-            case "1":
+            case "CL":
                 changeLevel(currentMap.info["next"])
                 
         # if player.triggered:
@@ -131,6 +157,12 @@ def update(surface: pygame.Surface, keyboardKeys: set,
         miniMap.draw(surface)
         currentMenu.labels["fps"].changeText(f"FPS: {round(clock.get_fps())}")
         currentMenu.labels["health"].changeText(f"{player.health}+")
+    
+    elif gameStatus == 2:
+        currentMap.update(surface)
+
+        if pygame.BUTTON_LEFT in mouseButtons:
+            editing_changeTile(mousePos)
 
     currentMenu.update(surface)
 
@@ -187,8 +219,17 @@ def init():
         }
     )
     menu_editing = Menu(
+        labels={
+            "matrix": Label((30, 15), (10, 5), (255, 255, 0, 100), "MATRIX",
+                            (60, 30, 85)),
+            "brush": Label((70, 15), (10, 5), (255, 255, 0, 100), "BRUSH",
+                           (60, 30, 85))
+        },
         buttons={
-
+            Button((70, 25), (10, 10), (255, 255, 0, 100), "CHANGE BRUSH", BLUE,
+                   func=editing_changeBrush),
+            Button((90, 10), (10, 10), (255, 255, 0, 100), "SAVE", BLUE,
+                   func=editing_saveChanges)
         }
     )
     menu_options = Menu(
