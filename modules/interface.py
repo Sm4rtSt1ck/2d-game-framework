@@ -141,7 +141,7 @@ def makeButtonTable(
             ])
 
 
-class ToggledButton(Button):
+class SwitchButton(Button):
     def __init__(
         self,
         coords: tuple,
@@ -156,8 +156,8 @@ class ToggledButton(Button):
         func=nothing,
         *args
     ) -> None:
-        super().__init__(
-            coords, size, color, text, text_color, font, func, *args)
+        super().__init__(coords=coords, size=size, color=color, text=text,
+                         text_color=text_color, font=font, func=func, *args)
 
         self.activated: bool = False
 
@@ -345,7 +345,7 @@ class MiniMap:
                     continue
                 coords = colIndex * TILESIZE, rowIndex * TILESIZE
                 pygame.draw.rect(surface, COLORS[tile],
-                                         (*coords, TILESIZE, TILESIZE))
+                                 (*coords, TILESIZE, TILESIZE))
         return surface
 
     def draw(self, surface: pygame.Surface) -> None:
@@ -378,11 +378,15 @@ class Menu:
         for button in self.buttons:
             if button.rect.collidepoint(mousePos):
                 button.onPress()
+                return True
+        return False
 
     def releaseButton(self, mousePos: tuple) -> None:
         for button in self.buttons:
             if button.pressed:
                 button.onRelease(button.rect.collidepoint(mousePos))
+                return True
+        return False
 
     def update(self, surface: pygame.Surface) -> None:
         surface.blit(self.surface, (0, 0))

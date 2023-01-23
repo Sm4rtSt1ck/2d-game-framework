@@ -97,7 +97,7 @@ class Movable(Entity):
 
         self.speed_x *= physics.FRICTION[self.collided_y[2]]
 
-        dt_speed_x = self.speed_x * dt 
+        dt_speed_x = self.speed_x * dt
         dt_speed_y = self.speed_y * dt
 
         # X collision
@@ -164,7 +164,7 @@ class Bullet(Movable):
             self.sprite.fill((255, 255, 0))
 
     def update(
-        self,       
+        self,
         mapTerrain: list[list[str]], mapTriggers: list[list[str]],
         surface: pygame.Surface,
         dt: int,
@@ -173,12 +173,9 @@ class Bullet(Movable):
         super().update(mapTerrain=mapTerrain, mapTriggers=mapTriggers,
                        surface=surface, dt=dt)
         for entity in entities:
-            # if physics.entityCollision(self.x, self.y, self.width, self.height,
-            #                            entity.x, entity.y, entity.width,
-            #                            entity.height):
             if self.checkCollision(entity.x, entity.y,
                                    entity.width, entity.height):
-                entity.getDamage(self.damage)   
+                entity.getDamage(self.damage)
                 bullets.remove(self)
                 return
         if self.collided_x[2] != "0" or self.collided_y[2] != "0":
@@ -315,7 +312,7 @@ class Player(Character):
                          jumpStrength=jumpStrength, spritePath="player.png",
                          size=size)
         self.slots = [0, 0, 0, 0, 0]
-        
+
         # MUST BE DELETED!
         self.slots[1] = weapons.ShootingWeapon(10, 1.5, 140)
         self.selectedSlot = 1
@@ -350,8 +347,8 @@ class TestMovable(Movable):
         coords: tuple
     ) -> None:
         super().__init__(coords=coords, maxHealth=100, maxSpeed=0,
-                         acceleration=0, weight=1, spritePath="fighter_test.png",
-                         size=(64, 64))
+                         acceleration=0, weight=1,
+                         spritePath="fighter_test.png", size=(64, 64))
 
 
 class TestFighter(Fighter):

@@ -1,7 +1,7 @@
 import pygame
 from modules import entities, level
-from modules.interface import (Button, Label, Menu, MiniMap, Slider, Table,
-                               makeButtonTable)
+from modules.interface import (Button, SwitchButton, Label, Menu, MiniMap,
+                               Slider, makeButtonTable)
 from modules.parameters.colors import *
 from modules.parameters.parameters import (fps, images_path,
                                            level_when_game_started, music_path,
@@ -65,13 +65,14 @@ def editing_saveChanges() -> None:
     exitGame()
 
 
-def editing_changeTile(mousePos: tuple): currentMap.changeTile(mousePos)
-
-
 def editing_changeBrush():
     currentMap.changeBrush()
     currentMenu.labels["brush"].changeText(currentMap.brush)
     currentMenu.labels["brush"].changeBackground(COLORS[currentMap.brush])
+
+
+def editing_changeBrushMode():
+    currentMap.changeBrushMode()
 
 
 def goto_edit(level_name: str) -> None:
@@ -114,8 +115,9 @@ def exitGame() -> None:
     quit()
 
 
-def update(surface: pygame.Surface, keyboardKeys: set,
-           mouseButtons: set, mousePos: tuple,
+def update(surface: pygame.Surface, keyboardKeys: set, pressedKeys: set,
+           releasedKeys: set, mouseButtons: set, pressedButtons: set,
+           releasedButtons: set, mousePos: tuple,
            clock: pygame.time.Clock, dt: float) -> None:
     """Game tick"""
 
@@ -150,19 +152,31 @@ def update(surface: pygame.Surface, keyboardKeys: set,
                 pass
             case "CL":
                 changeLevel(currentMap.info["next"])
-                
+
         # if player.triggered:
         #     match player.triggered[2]:
         #         case "1": screamer(surface)
         miniMap.draw(surface)
         currentMenu.labels["fps"].changeText(f"FPS: {round(clock.get_fps())}")
         currentMenu.labels["health"].changeText(f"{player.health}+")
-    
+
     elif gameStatus == 2:
-        currentMap.update(surface)
+        currentMap.update(mousePos, surface)
 
         if pygame.BUTTON_LEFT in mouseButtons:
-            editing_changeTile(mousePos)
+            if pygame.BUTTON_LEFT in pressedButtons:
+                currentMap.setStartMousePos(mousePos)
+            currentMap.changeTile()
+        else:
+            if pygame.BUTTON_LEFT in releasedButtons:
+                currentMap.changeTile(False, True)
+        if pygame.BUTTON_RIGHT in mouseButtons:
+            if pygame.BUTTON_RIGHT in pressedButtons:
+                currentMap.setStartMousePos(mousePos)
+            currentMap.changeTile(True)
+        else:
+            if pygame.BUTTON_RIGHT in releasedButtons:
+                currentMap.changeTile(True, True)
 
     currentMenu.update(surface)
 
@@ -226,8 +240,11 @@ def init():
                            (60, 30, 85))
         },
         buttons={
-            Button((70, 25), (10, 10), (255, 255, 0, 100), "CHANGE BRUSH", BLUE,
-                   func=editing_changeBrush),
+            Button((70, 25), (10, 10), (255, 255, 0, 100), "CHANGE BRUSH",
+                   BLUE, func=editing_changeBrush),
+            SwitchButton((30, 25), (10, 10), (255, 255, 0, 100), "PEN", BLUE,
+                         (255, 255, 0), "FILLING", RED,
+                         func=editing_changeBrushMode),
             Button((90, 10), (10, 10), (255, 255, 0, 100), "SAVE", BLUE,
                    func=editing_saveChanges)
         }

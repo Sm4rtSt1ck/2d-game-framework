@@ -26,6 +26,7 @@ class Level:
 
     def createSurface(self, matrix: list[list[str]],
                       transparency: int = 100) -> pygame.Surface:
+        """Create a matrix of a layer"""
         surface = pygame.Surface(screenRes)
         surface.set_alpha(transparency)
         for rowIndex, row in enumerate(matrix):
@@ -73,7 +74,6 @@ class World(Level):
                     # Spawn fighters
                     case "TF":
                         entities.fighters.append(entities.TestFighter(coords))
-        # return entitiesSet
         return entities
 
     def update(self, surface: pygame.Surface, dt: int, player) -> None:
@@ -108,9 +108,6 @@ class World(Level):
             if not fighter.alive:
                 self.entities.fighters.remove(fighter)
 
-        # if fighter.triggered and fighter.triggered[2] == SOMETHING:
-        #     figher.SOMETHING()
-
         surface.blit(self.surface, (0, 0))
 
 
@@ -120,21 +117,56 @@ class EditLevel(Level):
 
         self.surface_entities = self.createSurface(self.matrix_entities, 50)
         self.suraface_triggers = self.createSurface(self.matrix_triggers, 50)
-
-        # Other
-        self.brush = "wh"
         self.currentMatrix = self.matrix_terrain
         self.currentSurface = self.surface_terrain
 
-    def changeBrush(self):
-        self.brush = tuple(COLORS.keys())[(tuple(COLORS.keys()).index(self.brush) + 1 if tuple(COLORS.keys()).index(self.brush) != len(COLORS)-1 else 0)]
+        # Other
+        self.brush = "wh"
+        self.brushMode = 1
+        self.startMousePos = (0, 0)
+        self.currMousePos = (0, 0)
 
-    def changeTile(self, mousePos: tuple[int, int]) -> None:
-        tile = mousePos[0] // TILESIZE, mousePos[1] // TILESIZE
-        self.currentMatrix[tile[1]][tile[0]] = self.brush
-        pygame.draw.rect(
-            self.currentSurface, COLORS[self.brush],
-            (tile[0]*TILESIZE, tile[1]*TILESIZE, TILESIZE, TILESIZE))
+    def changeBrush(self):
+        """If I don't rewrite this method, I'll go f*ck myself"""
+        self.brush = tuple(COLORS.keys())[(
+            tuple(COLORS.keys()).index(self.brush) + 1
+            if tuple(COLORS.keys()).index(self.brush) != len(COLORS)-1 else 0)]
+
+    def changeTile(self, clear: bool = False, apply: bool = False) -> None:
+        """Uses pen or filling tool to change tiles with current brush"""
+        if self.brushMode == 1:
+            self.currentMatrix[self.currMousePos[1]][self.currMousePos[0]]\
+                = "0" if clear else self.brush
+            pygame.draw.rect(
+                self.currentSurface,
+                (0, 0, 0, 0) if clear else COLORS[self.brush],
+                (self.currMousePos[0] * TILESIZE,
+                 self.currMousePos[1] * TILESIZE, TILESIZE, TILESIZE))
+        elif self.brushMode == 2:
+            if apply:
+                for rowIndex in range(min(self.startMousePos[1],
+                                          self.currMousePos[1]),
+                                      max(self.startMousePos[1],
+                                          self.currMousePos[1])):
+                    for colIndex in range(min(self.startMousePos[0],
+                                              self.currMousePos[0]),
+                                          max(self.startMousePos[0],
+                                              self.currMousePos[0])):
+                        self.currentMatrix[rowIndex][colIndex] =\
+                            "0" if clear else self.brush
+            pygame.draw.rect(
+                self.currentSurface if apply else self.surface,
+                (0, 0, 0, 0) if clear else COLORS[self.brush],
+                (min(self.startMousePos[0], self.currMousePos[0]) * TILESIZE,
+                 min(self.startMousePos[1], self.currMousePos[1]) * TILESIZE,
+                 abs(self.startMousePos[0] - self.currMousePos[0]) * TILESIZE,
+                 abs(self.startMousePos[1] - self.currMousePos[1]) * TILESIZE))
+
+    def changeBrushMode(self) -> None:
+        self.brushMode = 1 if self.brushMode == 2 else 2
+
+    def setStartMousePos(self, mousePos: tuple) -> None:
+        self.startMousePos = mousePos[0] // TILESIZE, mousePos[1] // TILESIZE
 
     def saveChanges(self) -> None:
         """Save all changes to .map files"""
@@ -148,6 +180,9 @@ class EditLevel(Level):
             data.write("\n".join(
                 [" ".join(row) for row in self.matrix_triggers]))
 
-    def update(self, surface: pygame.Surface) -> None:
+    def update(self, mousePos: tuple, surface: pygame.Surface) -> None:
         super().update()
+
+        self.currMousePos = mousePos[0] // TILESIZE, mousePos[1] // TILESIZE
+
         surface.blit(self.surface, (0, 0))

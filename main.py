@@ -10,33 +10,44 @@ pygame.display.set_caption("2D Game Engine")
 screen = pygame.display.set_mode(screenRes)
 mousePos = pygame.mouse.get_pos()
 mouseButtons = set()
+pressedButtons = set()
+releasedButtons = set()
 keyboardKeys = set()
+pressedKeys = set()
+releasedKeys = set()
 game.init()
 
 
 def onMouseButton(button: int, pressed: bool) -> None:
     if not pressed:
-        mouseButtons.remove(button)
-        if button == pygame.BUTTON_LEFT:
-            game.currentMenu.releaseButton(mousePos)
+        if button != pygame.BUTTON_LEFT\
+                or not game.currentMenu.releaseButton(mousePos):
+            mouseButtons.remove(button)
+            releasedButtons.add(button)
         return
 
-    mouseButtons.add(button)
-
-    if button == pygame.BUTTON_LEFT:
-        game.currentMenu.pressButton(mousePos)
+    if button != pygame.BUTTON_LEFT\
+            or not game.currentMenu.pressButton(mousePos):
+        mouseButtons.add(button)
+        pressedButtons.add(button)
 
 
 def onKeyboardKey(key: int, pressed: bool) -> None:
     if not pressed:
         keyboardKeys.remove(key)
+        releasedKeys.add(key)
         return
 
     keyboardKeys.add(key)
+    pressedKeys.add(key)
 
 
 def update(dt: int) -> None:
-    game.update(screen, keyboardKeys, mouseButtons, mousePos, clock, dt)
+    game.update(surface=screen, keyboardKeys=keyboardKeys,
+                pressedKeys=pressedKeys, releasedKeys=releasedKeys,
+                mouseButtons=mouseButtons, pressedButtons=pressedButtons,
+                releasedButtons=releasedButtons, mousePos=mousePos,
+                clock=clock, dt=dt)
     pygame.display.flip()
 
 
@@ -66,6 +77,11 @@ def main() -> None:
         dt = clock.tick(fps)
         eventHandling()
         update(dt)
+
+        pressedButtons.clear()
+        releasedButtons.clear()
+        pressedKeys.clear()
+        releasedKeys.clear()
 
     pygame.quit()
 
