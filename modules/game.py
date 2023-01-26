@@ -16,10 +16,6 @@ currentMenu: Menu
 currentMap: level.Level
 
 
-def exitGame() -> None:
-    exit()
-
-
 # Menu
 
 
@@ -62,7 +58,6 @@ def goto_menu_levelSelection() -> None:
 
 def editing_saveChanges() -> None:
     currentMap.saveChanges()
-    exitGame()
 
 
 def editing_changeBrush():

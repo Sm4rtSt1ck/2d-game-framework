@@ -331,8 +331,8 @@ class MiniMap:
         self.surface = self.createSurface(levelMatrix)
         self.surface = pygame.transform.scale(
             self.surface,
-            (self.surface.get_width() * size / 100,
-             self.surface.get_height() * size / 100))
+            (self.surface.get_width() * size // 100,
+             self.surface.get_height() * size // 100))
         self.surface.set_alpha(transparency)
 
     def createSurface(self, matrix: list[list[str]]) -> pygame.Surface:
