@@ -202,7 +202,7 @@ class Bullet(Movable):
                          acceleration=0, weight=weight, spritePath=spritePath,
                          size=size)
         self.speed_x, self.speed_y = cos(angle) * speed, sin(angle) * speed
-        self.damage = maths.calculateDamage(self.speed_x, self.height)
+        self.damage = maths.calculateDamage(speed, self.height)
 
         if spritePath is None:
             self.sprite = pygame.Surface((self.width, self.height))
