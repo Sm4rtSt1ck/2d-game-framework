@@ -86,7 +86,7 @@ class World(Level):
                            *self.entities.characters, *self.entities.fighters})
         # Idles
         for idle in self.entities.idles:
-            idle.update(self.surface, dt)
+            idle.update(dt, self.surface)
             if not idle.alive:
                 self.entities.idles.remove(idle)
         # Movables
