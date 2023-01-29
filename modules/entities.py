@@ -56,12 +56,15 @@ class SpriteSheet(Entity):
         spritePath: str,
         cols: int, rows: int,
         scale: tuple[int, int],
-        frameDelay: int, cycles: int
+        frameDelay: int, cycles: int,
+        colorkey: tuple[int, int, int] = None
     ) -> None:
         super().__init__(coords, 1, size=scale)
 
         self.sheet = pygame.transform.scale(
             pygame.image.load(images_path+spritePath), scale)
+        if colorkey is not None:
+            self.sheet.set_colorkey(colorkey)
         size = self.sheet.get_size()
         self.frameWidth, self.frameHeight = size[0] // cols, size[1] // rows
         self.shift_x, self.shift_y = 0, 0
