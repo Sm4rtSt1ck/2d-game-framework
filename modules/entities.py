@@ -179,11 +179,9 @@ class Movable(Entity):
             self.y += dt_speed_y
             self.onGround = False
             triggered_y = physics.collision_y(area, mapTriggers)
+            self.speed_y += physics.applyGravity(self.weight) * dt
 
         self.eyes = self.x + self.center[0], self.y + self.center[1]
-
-        if not self.onGround:
-            self.speed_y += physics.applyGravity(self.weight) * dt
 
         self.triggered = triggered_x if triggered_x[2] != "0" else triggered_y
 
@@ -260,6 +258,7 @@ class Character(Movable):
     def jump(self) -> None:
         if self.onGround:
             self.speed_y = -self.jumpStrength
+            self.onGround = False
             # self.speed_x *= 1.2
 
     def dialog(self) -> None: ...
