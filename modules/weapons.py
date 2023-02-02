@@ -45,9 +45,8 @@ class ShootingWeapon:
             entities.bullets.append(entities.Bullet(coords=coords,
                                     speed=self.bulletSpeed, weight=0.1,
                                     angle=angle,
+                                    spritePath="weapons/bullet.png",
                                     size=(self.caliber, self.caliber)))
-            # return bulletClass(
-            #     coords, self.caliber, self.bulletSpeed, angle, size=(10, 10))
 
     def update(self, x, y, dt: int, surface: pygame.Surface) -> None:
         self.timePassedSinceShot += dt

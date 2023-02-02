@@ -4,25 +4,71 @@ from modules import maths, physics, weapons
 from modules.parameters.parameters import TILESIZE, images_path
 
 
-class Entity:
+class SpriteSheet:
+    def __init__(
+        self,
+        spritePath: str,
+        cols: int, rows: int,
+        frameDelay: int,
+        size: tuple[int, int] = None,
+        colorKey: tuple[int, int, int] = None
+    ) -> None:
+
+        self.spriteSheetCols, self.spriteSheetRows = cols, rows
+        self.frameDelay = frameDelay
+
+        self.sheet = pygame.image.load(images_path+spritePath)
+        if size is not None:
+            self.width, self.height = size
+            pygame.transform.scale(self.sheet,
+                                   (self.width * self.spriteSheetCols,
+                                    self.height * self.spriteSheetRows))
+        else:
+            self.width, self.height = (
+                self.sheet.get_width() // self.spriteSheetCols,
+                self.sheet.get_height() // self.spriteSheetRows)
+        if colorKey is not None:
+            self.sheet.set_colorkey(colorKey)
+
+        self.curCol, self.curRow = 0, 0
+        self.shift_x, self.shift_y = 0, 0
+        self.timePassedSinceFrame = 0
+
+    def update(self, dt: int, surface: pygame.Surface) -> None:
+        surface.blit(self.sheet, (self.x, self.y),
+                     (self.shift_x, self.shift_y, self.width, self.height))
+        self.timePassedSinceFrame += dt
+        if self.timePassedSinceFrame >= self.frameDelay:
+            self.timePassedSinceFrame = 0
+            self.curCol += 1
+            if self.curCol == self.spriteSheetCols:
+                self.curCol = 0
+                self.curRow += 1
+                if self.curRow == self.spriteSheetRows:
+                    self.curRow = 0
+            self.shift_x = self.curCol * self.width
+            self.shift_y = self.curRow * self.height
+
+
+class Entity(SpriteSheet):
     def __init__(
         self,
         coords: tuple,
         maxHealth: int,
-        spritePath: str = None,
-        size: tuple = None
+        spritePath: str,
+        size: tuple[int, int] = None,
+        spriteSheetCols: int = 1, spriteSheetRows: int = 1,
+        spriteFrameDelay: int = 0,
+        spriteColorKey: tuple[int, int, int] = None
     ) -> None:
 
+        super().__init__(spritePath=spritePath, cols=spriteSheetCols,
+                         rows=spriteSheetRows, frameDelay=spriteFrameDelay,
+                         size=size, colorKey=spriteColorKey)
         self.x, self.y = coords
         self.maxHealth = maxHealth
         self.health = self.maxHealth
 
-        if spritePath is not None:
-            self.sprite = pygame.image.load(
-                images_path+spritePath)
-
-        self.width, self.height = size if size is not None \
-            else self.sprite.get_size()
         self.center = self.width / 2, self.height / 2
         self.eyes = self.x + self.center[0], self.y + self.center[1]
 
@@ -41,60 +87,40 @@ class Entity:
                     or self.y <= y + height <= self.y + height)
 
     def update(self, dt: int, surface: pygame.Surface) -> None:
+        super().update(dt=dt, surface=surface)
         if self.health <= 0:
             self.die()
-        surface.blit(self.sprite, (self.x, self.y))
 
 
 idles: list[Entity] = list()
 
 
-class SpriteSheet(Entity):
+class Sprite(Entity):
     def __init__(
         self,
         coords: tuple[int, int],
         spritePath: str,
-        cols: int, rows: int,
-        scale: tuple[int, int],
-        frameDelay: int, cycles: int,
-        colorkey: tuple[int, int, int] = None
+        size: tuple[int, int] = None,
+        spriteSheetCols: int = 1, spriteSheetRows: int = 1,
+        spriteFrameDelay: int = 0, cycles: int = 1,
+        spriteColorKey: tuple[int, int, int] = None
     ) -> None:
-        super().__init__(coords, 1, size=scale)
 
-        self.sheet = pygame.transform.scale(
-            pygame.image.load(images_path+spritePath), scale)
-        if colorkey is not None:
-            self.sheet.set_colorkey(colorkey)
-        size = self.sheet.get_size()
-        self.frameWidth, self.frameHeight = size[0] // cols, size[1] // rows
-        self.shift_x, self.shift_y = 0, 0
-        self.cols, self.rows = cols, rows
-        self.frameDelay = frameDelay
-        self.timePassedSinceFrame = 0
-        self.curCol, self.curRow = 0, 0
+        super().__init__(coords=coords, maxHealth=1, spritePath=spritePath,
+                         size=size, spriteSheetCols=spriteSheetCols,
+                         spriteSheetRows=spriteSheetRows,
+                         spriteFrameDelay=spriteFrameDelay,
+                         spriteColorKey=spriteColorKey)
         self.cycles = cycles
         self.curCycle = 0
 
     def update(self, dt: int, surface: pygame.Surface) -> None:
-        # super().update(dt, surface)
-        surface.blit(self.sheet, (self.x, self.y),
-                     (self.curCol * self.frameWidth,
-                      self.curRow * self.frameHeight,
-                      self.frameWidth, self.frameHeight))
-        self.timePassedSinceFrame += dt
-        if self.timePassedSinceFrame >= self.frameDelay:
-            self.timePassedSinceFrame = 0
-            self.curCol += 1
-            if self.curCol == self.cols:
-                self.curCol = 0
-                self.curRow += 1
-                if self.curRow > self.rows:
-                    self.curRow = 0
-                    self.curCycle += 1
-                    if self.curCycle == self.cycles:
-                        self.die()
-            self.shift_x = self.curCol * self.frameWidth
-            self.shift_y = self.curRow * self.frameHeight
+        super().update(dt, surface)
+        if self.curRow == 0 and self.curCol == 0 and\
+                self.timePassedSinceFrame == 0:
+            self.curCycle += 1
+        if self.curCycle == self.cycles:
+            self.die()
 
 
 class Movable(Entity):
@@ -207,14 +233,12 @@ class Bullet(Movable):
         self.speed_x, self.speed_y = cos(angle) * speed, sin(angle) * speed
         self.damage = maths.calculateDamage(self.speed_x, self.height)
 
-        if spritePath is None:
-            self.sprite = pygame.Surface((self.width, self.height))
-            self.sprite.fill((255, 255, 0))
-
     def die(self) -> None:
         super().die()
-        idles.append(SpriteSheet((self.x, self.y), "other/spark.png", 6, 1,
-                                 (120, 20), 7, 2))
+        idles.append(Sprite(coords=(self.x, self.y),
+                            spritePath="other/spark.png", size=(20, 20),
+                            spriteSheetCols=6, spriteSheetRows=1,
+                            spriteFrameDelay=30, cycles=1))
         bullets.remove(self)
 
     def update(
@@ -412,7 +436,7 @@ class TestFighter(Fighter):
         coords: tuple
     ) -> None:
 
-        super().__init__(coords, maxHealth=100, maxSpeed=0.7,
+        super().__init__(coords=coords, maxHealth=100, maxSpeed=0.7,
                          acceleration=0.01, weight=1, jumpStrength=1.5,
                          visionRange=300, attackDamage=15, attackRange=120,
                          attackDelay=1000, spritePath="fighter_test.png",
