@@ -20,7 +20,7 @@ class SpriteSheet:
         self.sheet = pygame.image.load(images_path+spritePath)
         if size is not None:
             self.width, self.height = size
-            pygame.transform.scale(self.sheet,
+            self.sheet = pygame.transform.scale(self.sheet,
                                    (self.width * self.spriteSheetCols,
                                     self.height * self.spriteSheetRows))
         else:
