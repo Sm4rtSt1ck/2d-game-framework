@@ -1,5 +1,5 @@
 import pygame
-from math import sin, cos, atan2
+from math import sin, cos, degrees, atan2
 from modules import maths, physics, weapons
 from modules.parameters.parameters import TILESIZE, images_path
 
@@ -10,12 +10,14 @@ class SpriteSheet:
         spritePath: str,
         cols: int, rows: int,
         frameDelay: int,
+        rotation: float = 0,
         size: tuple[int, int] = None,
         colorKey: tuple[int, int, int] = None
     ) -> None:
 
         self.spriteSheetCols, self.spriteSheetRows = cols, rows
         self.frameDelay = frameDelay
+        self.rotation = rotation
 
         self.sheet = pygame.image.load(images_path+spritePath)
         if size is not None:
@@ -57,6 +59,7 @@ class Entity(SpriteSheet):
         maxHealth: int,
         spritePath: str,
         size: tuple[int, int] = None,
+        rotation: float = 0,
         spriteSheetCols: int = 1, spriteSheetRows: int = 1,
         spriteFrameDelay: int = 0,
         spriteColorKey: tuple[int, int, int] = None
@@ -64,7 +67,7 @@ class Entity(SpriteSheet):
 
         super().__init__(spritePath=spritePath, cols=spriteSheetCols,
                          rows=spriteSheetRows, frameDelay=spriteFrameDelay,
-                         size=size, colorKey=spriteColorKey)
+                         size=size, rotation=rotation, colorKey=spriteColorKey)
         self.x, self.y = coords
         self.maxHealth = maxHealth
         self.health = self.maxHealth
@@ -101,13 +104,14 @@ class Sprite(Entity):
         coords: tuple[int, int],
         spritePath: str,
         size: tuple[int, int] = None,
+        rotation: float = 0,
         spriteSheetCols: int = 1, spriteSheetRows: int = 1,
-        spriteFrameDelay: int = 0, cycles: int = 1,
+        spriteFrameDelay: int = 0, cycles: int = 1,  # -1 = infinite
         spriteColorKey: tuple[int, int, int] = None
     ) -> None:
 
         super().__init__(coords=coords, maxHealth=1, spritePath=spritePath,
-                         size=size, spriteSheetCols=spriteSheetCols,
+                         size=size, rotation=rotation, spriteSheetCols=spriteSheetCols,
                          spriteSheetRows=spriteSheetRows,
                          spriteFrameDelay=spriteFrameDelay,
                          spriteColorKey=spriteColorKey)
@@ -132,11 +136,12 @@ class Movable(Entity):
         acceleration: float,
         weight: float,
         spritePath: str = None,
-        size: tuple = None
+        size: tuple = None,
+        rotation: float = 0
     ) -> None:
 
         super().__init__(coords=coords, maxHealth=maxHealth,
-                         spritePath=spritePath, size=size)
+                         spritePath=spritePath, size=size, rotation=rotation)
 
         self.maxSpeed = maxSpeed
         self.speed_x, self.speed_y = 0, 0
@@ -229,7 +234,8 @@ class Bullet(Movable):
     ) -> None:
         super().__init__(coords=coords, maxHealth=1, maxSpeed=speed,
                          acceleration=0, weight=weight, spritePath=spritePath,
-                         size=size)
+                         size=size, rotation=angle)
+        self.sheet = pygame.transform.rotate(self.sheet, -degrees(self.rotation))
         self.speed_x, self.speed_y = cos(angle) * speed, sin(angle) * speed
         self.damage = maths.calculateDamage(self.speed_x, self.height)
 
@@ -237,6 +243,7 @@ class Bullet(Movable):
         super().die()
         idles.append(Sprite(coords=(self.x, self.y),
                             spritePath="other/spark.png", size=(20, 20),
+                            rotation=self.rotation,
                             spriteSheetCols=6, spriteSheetRows=1,
                             spriteFrameDelay=30, cycles=1))
         bullets.remove(self)
@@ -392,7 +399,8 @@ class Player(Character):
         self.slots = [0, 0, 0, 0, 0]
 
         # MUST BE DELETED!
-        self.slots[1] = weapons.ShootingWeapon(10, 1.5, 140)
+        self.slots[1] = weapons.ShootingWeapon(
+            caliber=10, bulletSpeed=1.5, shotDelay=140)
         self.selectedSlot = 1
 
     def attack(self, mousePos: tuple) -> None:

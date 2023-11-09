@@ -26,7 +26,7 @@ class Level:
 
     def createSurface(self, matrix: list[list[str]],
                       transparency: int = 100) -> pygame.Surface:
-        """Create a matrix of a layer"""
+        """Create a surface of a layer"""
         surface = pygame.Surface(screenRes)
         surface.set_alpha(transparency)
         for rowIndex, row in enumerate(matrix):

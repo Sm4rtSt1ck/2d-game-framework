@@ -42,11 +42,13 @@ class ShootingWeapon:
               angle: float) -> None:
         if self.timePassedSinceShot >= self.shotDelay:
             self.timePassedSinceShot = 0
-            entities.bullets.append(entities.Bullet(coords=coords,
-                                    speed=self.bulletSpeed, weight=0.1,
-                                    angle=angle,
-                                    spritePath="weapons/bullet.png",
-                                    size=(self.caliber, self.caliber)))
+            entities.bullets.append(
+                entities.Bullet(coords=coords,
+                                speed=self.bulletSpeed,
+                                weight=self.caliber*0.01,
+                                angle=angle,
+                                spritePath="weapons/bullet.png",
+                                size=(self.caliber, self.caliber)))
 
     def update(self, x, y, dt: int, surface: pygame.Surface) -> None:
         self.timePassedSinceShot += dt
