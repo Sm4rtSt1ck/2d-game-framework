@@ -58,6 +58,7 @@ def eventHandling() -> None:
         match event.type:
             case pygame.QUIT:
                 running = False
+                game.exitGame()
             case pygame.MOUSEBUTTONDOWN:
                 onMouseButton(event.button, True)
             case pygame.MOUSEBUTTONUP:

@@ -101,11 +101,10 @@ def changeLevel(level_name: str) -> None:
 
 
 def apply_changes() -> None:
-    """Save all settings and restart the game"""
+    """Save all settings"""
 
     saveChanges(fps=fps, screen_resolution=screenRes,
                 volume=volume, sensitivity=sensitivity)
-    execv(sys_exec, ['python'] + sys_argv)
 
 
 def exitGame() -> None:
