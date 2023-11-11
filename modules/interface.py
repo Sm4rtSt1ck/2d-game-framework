@@ -1,12 +1,11 @@
 import pygame
 from modules.parameters.colors import *
 from modules.parameters.parameters import (TILESIZE, images_path, screenRes,
-                                           settings)
+                                           fonts_path)
 
 pygame.font.init()
 
 
-fonts_path = settings["fonts_path"]
 font_default = "JosefinSans/JosefinSans-Medium.ttf", 30
 
 

@@ -15,6 +15,7 @@ images_path = settings["images_path"]
 music_path = settings["music_path"]
 volume = settings["volume"]
 level_when_game_started = settings["current_level"]
+fonts_path = settings["fonts_path"]
 
 
 def saveChanges(**parameters) -> None:
