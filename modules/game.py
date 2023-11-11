@@ -1,4 +1,6 @@
 import pygame
+from os import execv
+from sys import executable as sys_exec, argv as sys_argv
 from modules import entities, level
 from modules.interface import (Button, SwitchButton, Label, Menu, MiniMap,
                                Slider, makeButtonTable)
@@ -103,6 +105,7 @@ def apply_changes() -> None:
 
     saveChanges(fps=fps, screen_resolution=screenRes,
                 volume=volume, sensitivity=sensitivity)
+    execv(sys_exec, ['python'] + sys_argv)
 
 
 def exitGame() -> None:
