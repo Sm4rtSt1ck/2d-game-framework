@@ -1,6 +1,6 @@
 import pygame
 from modules.parameters.colors import *
-from modules.parameters.parameters import (TILESIZE, images_path, screenRes,
+from modules.parameters.parameters import (TILESIZE, images_path, screen_res,
                                            fonts_path)
 
 pygame.font.init()
@@ -12,7 +12,7 @@ font_default = "JosefinSans/JosefinSans-Medium.ttf", 30
 def nothing(): return
 
 
-def changeColor(color: tuple) -> tuple:
+def change_color(color: tuple) -> tuple:
     r = color[0] * 0.5
     g = color[1] * 0.5
     b = color[2] * 0.5
@@ -26,51 +26,51 @@ class Label:
         size: tuple,
         color: tuple,
         text: str = "",
-        textColor: tuple = (255, 255, 255),
+        text_color: tuple = (255, 255, 255),
         font: tuple = font_default
     ) -> None:
 
-        self.coords = (screenRes[0] * coords[0] / 100,
-                       screenRes[1] * coords[1] / 100)
-        self.size = (screenRes[0] * size[0] / 100,
-                     screenRes[1] * size[1] / 100)
+        self.coords = (screen_res[0] * coords[0] / 100,
+                       screen_res[1] * coords[1] / 100)
+        self.size = (screen_res[0] * size[0] / 100,
+                     screen_res[1] * size[1] / 100)
         self.color = color[:3]
         self.alpha = color[3] if len(color) == 4 else 255
         self.rect = pygame.Rect(0, 0, *self.size)
         self.rect.center = self.coords
-        self.textColor = textColor
+        self.text_color = text_color
 
         # Text
         self.font = pygame.font.Font(fonts_path+font[0], font[1])
-        self.text = self.font.render(text, False, self.textColor)
-        self.textPos = (
+        self.text = self.font.render(text, False, self.text_color)
+        self.text_pos = (
             self.rect.w // 2 - self.text.get_rect().w // 2,
             self.rect.h // 2 - self.text.get_rect().h // 2)
 
         # Label surface
         self.surface_default = pygame.Surface(self.size)
         self.surface_default.fill(self.color)
-        self.surface_default.blit(self.text, self.textPos)
+        self.surface_default.blit(self.text, self.text_pos)
         self.surface_default.set_alpha(self.alpha)
         self.surface_default.set_colorkey(TRANSPARENT)
         self.surface = self.surface_default
 
-    def changeText(self, text: str, color: tuple = None) -> None:
+    def change_text(self, text: str, color: tuple = None) -> None:
         self.text = self.font.render(
-            text, False, color if color else self.textColor)
-        self.textPos = (
+            text, False, color if color else self.text_color)
+        self.text_pos = (
             self.rect.w // 2 - self.text.get_rect().w // 2,
             self.rect.h // 2 - self.text.get_rect().h // 2)
         self.surface_default.fill(self.color)
-        self.surface_default.blit(self.text, self.textPos)
+        self.surface_default.blit(self.text, self.text_pos)
 
-    def changeBackground(self, color: tuple) -> None:
+    def change_background(self, color: tuple) -> None:
         """Change the label background color"""
         self.color = color[:3]
         self.alpha = color[3] if len(color) == 4 else 255
         self.surface_default = pygame.Surface(self.size)
         self.surface_default.fill(self.color)
-        self.surface_default.blit(self.text, self.textPos)
+        self.surface_default.blit(self.text, self.text_pos)
         self.surface_default.set_alpha(self.alpha)
         self.surface = self.surface_default
 
@@ -100,17 +100,17 @@ class Button(Label):
         # When button is being pressed
         self.surface_pressed = pygame.Surface(self.size)
         self.surface_pressed.fill(
-            color2 if color2 is not None else changeColor(self.color))
-        self.surface_pressed.blit(self.text, self.textPos)
+            color2 if color2 is not None else change_color(self.color))
+        self.surface_pressed.blit(self.text, self.text_pos)
         self.surface_pressed.set_alpha(self.alpha)
         self.surface_pressed.set_colorkey(TRANSPARENT)
 
-    def onPress(self):
+    def on_press(self):
         self.pressed = True
 
         self.surface = self.surface_pressed
 
-    def onRelease(self, doFunc: bool):
+    def on_release(self, doFunc: bool):
         self.pressed = False
         if doFunc:
             self.func(*self.args)
@@ -118,25 +118,25 @@ class Button(Label):
         self.surface = self.surface_default
 
 
-def makeButtonTable(
+def make_button_table(
     x: int, y: int,
-    rangeStart: int, rangeEnd: int, cols: int,
-    colDistance: int, rowDistance: int,
-    buttonWidth: int, buttonHeight: int,
+    range_start: int, range_end: int, cols: int,
+    col_distance: int, row_distance: int,
+    button_width: int, button_height: int,
     color: tuple,
-    textColor: tuple, font: tuple = font_default,
+    text_color: tuple, font: tuple = font_default,
     color2: tuple = None,
     func=nothing,
     *args
 ) -> list:
 
     return ([
-            Button((x + (button-1) % cols * colDistance,
-                    y + (button-1) // cols * rowDistance),
-                   (buttonWidth, buttonHeight),
-                   color, str(button), textColor, font, color2,
+            Button((x + (button-1) % cols * col_distance,
+                    y + (button-1) // cols * row_distance),
+                   (button_width, button_height),
+                   color, str(button), text_color, font, color2,
                    func, args[0].replace("*", str(button)), *args[1:])
-            for button in range(rangeStart, rangeEnd)
+            for button in range(range_start, range_end)
             ])
 
 
@@ -170,32 +170,32 @@ class SwitchButton(Button):
         self.text2 = self.font.render(
             text2 if text2 else text, True,
             text2_color if text2_color else text_color)
-        self.text2Pos: tuple = (
+        self.text2_pos: tuple = (
             self.rect.w // 2 - self.text2.get_rect().w // 2,
             self.rect.h // 2 - self.text2.get_rect().h // 2)
 
         # When button is being idle and activated
         self.surface_activated = pygame.Surface(self.size)
         self.surface_activated.fill(self.color2)
-        self.surface_activated.blit(self.text2, self.text2Pos)
+        self.surface_activated.blit(self.text2, self.text2_pos)
         self.surface_activated.set_alpha(self.alpha2)
         self.surface_activated.set_colorkey(TRANSPARENT)
         # When button is being pressed and activated
-        self.surface_pressedActivated = pygame.Surface(self.size)
-        self.surface_pressedActivated.fill(changeColor(self.color2))
-        self.surface_pressedActivated.blit(self.text2, self.text2Pos)
-        self.surface_pressedActivated.set_alpha(self.alpha2)
-        self.surface_pressedActivated.set_colorkey(TRANSPARENT)
+        self.surface_pressed_activated = pygame.Surface(self.size)
+        self.surface_pressed_activated.fill(change_color(self.color2))
+        self.surface_pressed_activated.blit(self.text2, self.text2_pos)
+        self.surface_pressed_activated.set_alpha(self.alpha2)
+        self.surface_pressed_activated.set_colorkey(TRANSPARENT)
 
-    def onPress(self) -> None:
+    def on_press(self) -> None:
         self.pressed = True
 
         if self.activated:
-            self.surface = self.surface_pressedActivated
+            self.surface = self.surface_pressed_activated
         else:
             self.surface = self.surface_pressed
 
-    def onRelease(self, doFunc: bool) -> None:
+    def on_release(self, doFunc: bool) -> None:
         self.pressed = False
         if doFunc:
             self.activated = not self.activated
@@ -213,7 +213,7 @@ class Slider(Button):
         coords: tuple,
         size: tuple,
         points: int,
-        backgroundColor: tuple,
+        background_color: tuple,
         text: str,
         color: tuple,
         font: tuple = font_default,
@@ -221,27 +221,27 @@ class Slider(Button):
         *args
     ) -> None:
 
-        super().__init__(coords, size, backgroundColor,
+        super().__init__(coords, size, background_color,
                          text, color, font, color, func, *args)
 
-        self.coords = (screenRes[0] * coords[0] / 100,
-                       screenRes[1] * coords[1] / 100)
-        self.size = (screenRes[0] * size[0] / 100,
-                     screenRes[1] * size[1] / 100)
+        self.coords = (screen_res[0] * coords[0] / 100,
+                       screen_res[1] * coords[1] / 100)
+        self.size = (screen_res[0] * size[0] / 100,
+                     screen_res[1] * size[1] / 100)
         self.points = points
         self.interval = (self.size[0] - 20) / (points - 1)
         self.color = color
-        self.backgroundColor = backgroundColor
+        self.background_color = background_color
         self.rect = pygame.Rect(0, 0, *self.size)
         self.rect.center = self.coords
-        self.surface = self.createSurface()
+        self.surface = self.create_surface()
         self.surface.set_colorkey(TRANSPARENT)
 
-        self.currentPoint = 0
+        self.current_point = 0
 
-    def createSurface(self) -> pygame.Surface:
+    def create_surface(self) -> pygame.Surface:
         surface = pygame.Surface(self.size)
-        surface.fill(self.backgroundColor)
+        surface.fill(self.background_color)
         pygame.draw.line(surface, self.color, (10, self.size[1] / 2),
                          (self.size[0] - 10, self.size[1] / 2), 5)
         for point in range(self.points):
@@ -262,14 +262,14 @@ class Table:
         labels: dict[str, Label] = {},
         buttons: set[Button] = set()
     ) -> None:
-        self.coords = (screenRes[0] * coords[0] / 100,
-                       screenRes[1] * coords[1] / 100)
+        self.coords = (screen_res[0] * coords[0] / 100,
+                       screen_res[1] * coords[1] / 100)
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.rect.center = self.coords
         self.matrix = [[] * cols] * rows  # может возникнуть прикол
         self.labels = labels
         self.buttons = buttons
-        self.updateSurface()
+        self.update_surface()
 
     def addRow(self, index: int = None) -> None:
         self.matrix.insert(index, []) if index else self.matrix.append([])
@@ -282,15 +282,15 @@ class Table:
 
     def insertLabel(self, col: int, row: int, label: Label) -> None:
         self.matrix[row][col] = label
-        self.updateSurface()
+        self.update_surface()
 
-    def getWidth(self):
+    def get_width(self):
         width = 0
         for row in self.matrix:
             width = max(width, sum([label.rect.w for label in row]))
         return width
 
-    def getHeight(self):
+    def get_height(self):
         height = 0
         for row in self.matrix:
             try:
@@ -299,18 +299,18 @@ class Table:
                 pass
         return height
 
-    def updateSurface(self) -> None:
-        self.surface = pygame.Surface((self.getWidth(), self.getHeight()))
+    def update_surface(self) -> None:
+        self.surface = pygame.Surface((self.get_width(), self.get_height()))
 
-    def pressButton(self, mousePos: tuple) -> None:
+    def press_button(self, mouse_pos: tuple) -> None:
         for button in self.buttons:
-            if button.rect.collidepoint(mousePos):
-                button.onPress()
+            if button.rect.collidepoint(mouse_pos):
+                button.on_press()
 
-    def releaseButton(self, mousePos: tuple) -> None:
+    def release_button(self, mouse_pos: tuple) -> None:
         for button in self.buttons:
             if button.pressed:
-                button.onRelease(button.rect.collidepoint(mousePos))
+                button.on_release(button.rect.collidepoint(mouse_pos))
 
     def update(self, surface: pygame.Surface) -> None:
         for label in self.labels:
@@ -321,28 +321,28 @@ class Table:
 
 
 class MiniMap:
-    def __init__(self, levelMatrix: list[list[str]], coords: tuple[int, int],
+    def __init__(self, level_matrix: list[list[str]], coords: tuple[int, int],
                  size: int, transparency: int) -> None:
-        self.coords = (screenRes[0] * coords[0] / 100,
-                       screenRes[1] * coords[1] / 100)
+        self.coords = (screen_res[0] * coords[0] / 100,
+                       screen_res[1] * coords[1] / 100)
         self.rect = pygame.Rect(0, 0, size, size)
         self.rect.center = self.coords
-        self.surface = self.createSurface(levelMatrix)
+        self.surface = self.create_surface(level_matrix)
         self.surface = pygame.transform.scale(
             self.surface,
             (self.surface.get_width() * size // 100,
              self.surface.get_height() * size // 100))
         self.surface.set_alpha(transparency)
 
-    def createSurface(self, matrix: list[list[str]]) -> pygame.Surface:
+    def create_surface(self, matrix: list[list[str]]) -> pygame.Surface:
         """Create a top view map of a level"""
         surface = pygame.Surface(
             (len(matrix[0]) * TILESIZE, len(matrix) * TILESIZE))
-        for rowIndex, row in enumerate(matrix):
-            for colIndex, tile in enumerate(row):
+        for row_index, row in enumerate(matrix):
+            for col_index, tile in enumerate(row):
                 if tile == "0":
                     continue
-                coords = colIndex * TILESIZE, rowIndex * TILESIZE
+                coords = col_index * TILESIZE, row_index * TILESIZE
                 pygame.draw.rect(surface, COLORS[tile],
                                  (*coords, TILESIZE, TILESIZE))
         return surface
@@ -362,7 +362,7 @@ class Menu:
         self.labels = labels
         self.buttons = buttons
 
-        self.surface = pygame.Surface(screenRes)
+        self.surface = pygame.Surface(screen_res)
         self.surface.set_colorkey(TRANSPARENT)
         self.surface.fill(TRANSPARENT)
         if background_path:
@@ -370,20 +370,20 @@ class Menu:
                 pygame.transform.scale(
                     pygame.image.load(
                         images_path + background_path).convert_alpha(),
-                    screenRes),
+                    screen_res),
                 (0, 0))
 
-    def pressButton(self, mousePos: tuple) -> None:
+    def press_button(self, mouse_pos: tuple) -> None:
         for button in self.buttons:
-            if button.rect.collidepoint(mousePos):
-                button.onPress()
+            if button.rect.collidepoint(mouse_pos):
+                button.on_press()
                 return True
         return False
 
-    def releaseButton(self, mousePos: tuple) -> None:
+    def release_button(self, mouse_pos: tuple) -> None:
         for button in self.buttons:
             if button.pressed:
-                button.onRelease(button.rect.collidepoint(mousePos))
+                button.on_release(button.rect.collidepoint(mouse_pos))
                 return True
         return False
 

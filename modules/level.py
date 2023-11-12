@@ -1,6 +1,6 @@
 import pygame
 from json import load as load_json
-from modules.parameters.parameters import TILESIZE, screenRes
+from modules.parameters.parameters import TILESIZE, screen_res
 from modules.parameters.colors import COLORS
 
 
@@ -11,29 +11,29 @@ class Level:
         """Load level"""
         self.path = "maps/" + name
         # Load matrices
-        self.matrix_terrain = self.loadMatrix("terrain")
-        self.matrix_entities = self.loadMatrix("entities")
-        self.matrix_triggers = self.loadMatrix("triggers")
+        self.matrix_terrain = self.load_matrix("terrain")
+        self.matrix_entities = self.load_matrix("entities")
+        self.matrix_triggers = self.load_matrix("triggers")
         # Create surfaces
         self.surface = pygame.Surface((len(self.matrix_terrain[0]) * TILESIZE,
                                        len(self.matrix_terrain) * TILESIZE))
-        self.surface_terrain = self.createSurface(self.matrix_terrain)
+        self.surface_terrain = self.create_surface(self.matrix_terrain)
 
-    def loadMatrix(self, name: str) -> list[list[str]]:
+    def load_matrix(self, name: str) -> list[list[str]]:
         """Create a matrix of a layer"""
         with open(self.path+"/"+name+".map", "r", encoding="utf-8") as f:
             return [row.split() for row in f.read().split("\n")]
 
-    def createSurface(self, matrix: list[list[str]],
+    def create_surface(self, matrix: list[list[str]],
                       transparency: int = 100) -> pygame.Surface:
         """Create a surface of a layer"""
-        surface = pygame.Surface(screenRes)
+        surface = pygame.Surface(screen_res)
         surface.set_alpha(transparency)
-        for rowIndex, row in enumerate(matrix):
-            for colIndex, tile in enumerate(row):
+        for row_index, row in enumerate(matrix):
+            for col_index, tile in enumerate(row):
                 if tile == "0":
                     continue
-                x, y = colIndex * TILESIZE, rowIndex * TILESIZE
+                x, y = col_index * TILESIZE, row_index * TILESIZE
                 pygame.draw.rect(surface, COLORS[tile],
                                  (x, y, TILESIZE, TILESIZE))
         return surface
@@ -59,11 +59,11 @@ class World(Level):
         entities.bullets.clear()
         entities.characters.clear()
         entities.fighters.clear()
-        for rowIndex, row in enumerate(matrix):
-            for colIndex, tile in enumerate(row):
+        for row_index, row in enumerate(matrix):
+            for col_index, tile in enumerate(row):
                 if tile == "0":
                     continue
-                coords = colIndex * TILESIZE, rowIndex * TILESIZE
+                coords = col_index * TILESIZE, row_index * TILESIZE
                 match tile:
                     # Set player spawn
                     case "SP":
@@ -115,60 +115,60 @@ class EditLevel(Level):
     def __init__(self, name: str) -> None:
         super().__init__(name)
 
-        self.surface_entities = self.createSurface(self.matrix_entities, 50)
-        self.suraface_triggers = self.createSurface(self.matrix_triggers, 50)
-        self.currentMatrix = self.matrix_terrain
-        self.currentSurface = self.surface_terrain
+        self.surface_entities = self.create_surface(self.matrix_entities, 50)
+        self.suraface_triggers = self.create_surface(self.matrix_triggers, 50)
+        self.current_matrix = self.matrix_terrain
+        self.current_surface = self.surface_terrain
 
         # Other
         self.brush = "wh"
-        self.brushMode = 1
-        self.startMousePos = (0, 0)
-        self.currMousePos = (0, 0)
+        self.brush_mode = 1
+        self.start_mouse_pos = (0, 0)
+        self.current_mouse_pos = (0, 0)
 
-    def changeBrush(self):
+    def change_brush(self):
         """If I don't rewrite this method, I'll go f*ck myself"""
         self.brush = tuple(COLORS.keys())[(
             tuple(COLORS.keys()).index(self.brush) + 1
             if tuple(COLORS.keys()).index(self.brush) != len(COLORS)-1 else 0)]
 
-    def changeTile(self, clear: bool = False, apply: bool = False) -> None:
+    def change_tile(self, clear: bool = False, apply: bool = False) -> None:
         """Uses pen or filling tool to change tiles with current brush"""
-        if self.brushMode == 1:
-            self.currentMatrix[self.currMousePos[1]][self.currMousePos[0]]\
+        if self.brush_mode == 1:
+            self.current_matrix[self.current_mouse_pos[1]][self.current_mouse_pos[0]]\
                 = "0" if clear else self.brush
             pygame.draw.rect(
-                self.currentSurface,
+                self.current_surface,
                 (0, 0, 0, 0) if clear else COLORS[self.brush],
-                (self.currMousePos[0] * TILESIZE,
-                 self.currMousePos[1] * TILESIZE, TILESIZE, TILESIZE))
-        elif self.brushMode == 2:
+                (self.current_mouse_pos[0] * TILESIZE,
+                 self.current_mouse_pos[1] * TILESIZE, TILESIZE, TILESIZE))
+        elif self.brush_mode == 2:
             if apply:
-                for rowIndex in range(min(self.startMousePos[1],
-                                          self.currMousePos[1]),
-                                      max(self.startMousePos[1],
-                                          self.currMousePos[1])):
-                    for colIndex in range(min(self.startMousePos[0],
-                                              self.currMousePos[0]),
-                                          max(self.startMousePos[0],
-                                              self.currMousePos[0])):
-                        self.currentMatrix[rowIndex][colIndex] =\
+                for row_index in range(min(self.start_mouse_pos[1],
+                                          self.current_mouse_pos[1]),
+                                      max(self.start_mouse_pos[1],
+                                          self.current_mouse_pos[1])):
+                    for col_index in range(min(self.start_mouse_pos[0],
+                                              self.current_mouse_pos[0]),
+                                          max(self.start_mouse_pos[0],
+                                              self.current_mouse_pos[0])):
+                        self.current_matrix[row_index][col_index] =\
                             "0" if clear else self.brush
             pygame.draw.rect(
-                self.currentSurface if apply else self.surface,
+                self.current_surface if apply else self.surface,
                 (0, 0, 0, 0) if clear else COLORS[self.brush],
-                (min(self.startMousePos[0], self.currMousePos[0]) * TILESIZE,
-                 min(self.startMousePos[1], self.currMousePos[1]) * TILESIZE,
-                 abs(self.startMousePos[0] - self.currMousePos[0]) * TILESIZE,
-                 abs(self.startMousePos[1] - self.currMousePos[1]) * TILESIZE))
+                (min(self.start_mouse_pos[0], self.current_mouse_pos[0]) * TILESIZE,
+                 min(self.start_mouse_pos[1], self.current_mouse_pos[1]) * TILESIZE,
+                 abs(self.start_mouse_pos[0] - self.current_mouse_pos[0]) * TILESIZE,
+                 abs(self.start_mouse_pos[1] - self.current_mouse_pos[1]) * TILESIZE))
 
-    def changeBrushMode(self) -> None:
-        self.brushMode = 1 if self.brushMode == 2 else 2
+    def change_brush_mode(self) -> None:
+        self.brush_mode = 1 if self.brush_mode == 2 else 2
 
-    def setStartMousePos(self, mousePos: tuple) -> None:
-        self.startMousePos = mousePos[0] // TILESIZE, mousePos[1] // TILESIZE
+    def set_start_mouse_pos(self, mouse_pos: tuple) -> None:
+        self.start_mouse_pos = mouse_pos[0] // TILESIZE, mouse_pos[1] // TILESIZE
 
-    def saveChanges(self) -> None:
+    def save_changes(self) -> None:
         """Save all changes to .map files"""
         with open(self.path+"/terrain.map", "w") as data:
             data.write("\n".join(
@@ -180,9 +180,9 @@ class EditLevel(Level):
             data.write("\n".join(
                 [" ".join(row) for row in self.matrix_triggers]))
 
-    def update(self, mousePos: tuple, surface: pygame.Surface) -> None:
+    def update(self, mouse_pos: tuple, surface: pygame.Surface) -> None:
         super().update()
 
-        self.currMousePos = mousePos[0] // TILESIZE, mousePos[1] // TILESIZE
+        self.current_mouse_pos = mouse_pos[0] // TILESIZE, mouse_pos[1] // TILESIZE
 
         surface.blit(self.surface, (0, 0))

@@ -1,74 +1,74 @@
 import pygame
 from modules import game
-from modules.parameters.parameters import screenRes, fps
+from modules.parameters.parameters import screen_res, fps
 
 
 running = True
 clock = pygame.time.Clock()
 pygame.display.set_icon(pygame.image.load("resources/icon.ico"))
 pygame.display.set_caption("2D Game Engine")
-screen = pygame.display.set_mode(screenRes)
-mousePos = pygame.mouse.get_pos()
-mouseButtons = set()
-pressedButtons = set()
-releasedButtons = set()
-keyboardKeys = set()
-pressedKeys = set()
-releasedKeys = set()
+screen = pygame.display.set_mode(screen_res)
+mouse_pos = pygame.mouse.get_pos()
+mouse_buttons = set()
+pressed_buttons = set()
+released_buttons = set()
+keyboard_keys = set()
+pressed_keys = set()
+released_keys = set()
 game.init()
 
 
-def onMouseButton(button: int, pressed: bool) -> None:
+def on_mouse_button(button: int, pressed: bool) -> None:
     if not pressed:
         if button != pygame.BUTTON_LEFT\
-                or not game.currentMenu.releaseButton(mousePos):
-            mouseButtons.remove(button)
-            releasedButtons.add(button)
+                or not game.current_menu.release_button(mouse_pos):
+            mouse_buttons.remove(button)
+            released_buttons.add(button)
         return
 
     if button != pygame.BUTTON_LEFT\
-            or not game.currentMenu.pressButton(mousePos):
-        mouseButtons.add(button)
-        pressedButtons.add(button)
+            or not game.current_menu.press_button(mouse_pos):
+        mouse_buttons.add(button)
+        pressed_buttons.add(button)
 
 
-def onKeyboardKey(key: int, pressed: bool) -> None:
+def on_keyboard_key(key: int, pressed: bool) -> None:
     if not pressed:
-        keyboardKeys.remove(key)
-        releasedKeys.add(key)
+        keyboard_keys.remove(key)
+        released_keys.add(key)
         return
 
-    keyboardKeys.add(key)
-    pressedKeys.add(key)
+    keyboard_keys.add(key)
+    pressed_keys.add(key)
 
 
 def update(dt: int) -> None:
-    game.update(surface=screen, keyboardKeys=keyboardKeys,
-                pressedKeys=pressedKeys, releasedKeys=releasedKeys,
-                mouseButtons=mouseButtons, pressedButtons=pressedButtons,
-                releasedButtons=releasedButtons, mousePos=mousePos,
+    game.update(surface=screen, keyboard_keys=keyboard_keys,
+                pressed_keys=pressed_keys, released_keys=released_keys,
+                mouse_buttons=mouse_buttons, pressed_buttons=pressed_buttons,
+                released_buttons=released_buttons, mouse_pos=mouse_pos,
                 clock=clock, dt=dt)
     pygame.display.flip()
 
 
-def eventHandling() -> None:
-    global running, mousePos
+def event_handling() -> None:
+    global running, mouse_pos
 
     for event in pygame.event.get():
         match event.type:
             case pygame.QUIT:
                 running = False
-                game.exitGame()
+                game.exit_game()
             case pygame.MOUSEBUTTONDOWN:
-                onMouseButton(event.button, True)
+                on_mouse_button(event.button, True)
             case pygame.MOUSEBUTTONUP:
-                onMouseButton(event.button, False)
+                on_mouse_button(event.button, False)
             case pygame.KEYDOWN:
-                onKeyboardKey(event.key, True)
+                on_keyboard_key(event.key, True)
             case pygame.KEYUP:
-                onKeyboardKey(event.key, False)
+                on_keyboard_key(event.key, False)
             case pygame.MOUSEMOTION:
-                mousePos = pygame.mouse.get_pos()
+                mouse_pos = pygame.mouse.get_pos()
             case pygame.WINDOWRESIZED:
                 pass
 
@@ -76,13 +76,13 @@ def eventHandling() -> None:
 def main() -> None:
     while running:
         dt = clock.tick(fps)
-        eventHandling()
+        event_handling()
         update(dt)
 
-        pressedButtons.clear()
-        releasedButtons.clear()
-        pressedKeys.clear()
-        releasedKeys.clear()
+        pressed_buttons.clear()
+        released_buttons.clear()
+        pressed_keys.clear()
+        released_keys.clear()
 
     pygame.quit()
 

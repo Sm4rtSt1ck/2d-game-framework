@@ -3,191 +3,191 @@ from os import execv
 from sys import executable as sys_exec, argv as sys_argv
 from modules import entities, level
 from modules.interface import (Button, SwitchButton, Label, Menu, MiniMap,
-                               Slider, makeButtonTable)
+                               Slider, make_button_table)
 from modules.parameters.colors import *
 from modules.parameters.parameters import (fps, images_path,
                                            level_when_game_started, music_path,
-                                           saveChanges, screenCenter,
-                                           screenRes, sensitivity, volume)
+                                           save_changes, screen_center,
+                                           screen_res, sensitivity, volume)
 
 pygame.mixer.init()
 
 
-gameStatus: int
-currentMenu: Menu
-currentMap: level.Level
+game_status: int
+current_menu: Menu
+current_map: level.Level
 
 
 # Menu
 
 
 def goto_menu() -> None:
-    global gameStatus, currentMap, currentMenu
+    global game_status, current_map, current_menu
 
     # sound_menu = pygame.mixer.Sound(music_path+"main_menu.wav")
     # sound_menu.set_volume(volume)
     # sound_menu.play()
 
-    currentMap = None
-    gameStatus = 0
+    current_map = None
+    game_status = 0
     pygame.mouse.set_visible(1)
 
     goto_menu_main()
 
 
 def goto_menu_main() -> None:
-    global currentMenu
-    currentMenu = menu_main
+    global current_menu
+    current_menu = menu_main
 
 
 def goto_menu_editing() -> None:
-    global currentMenu
-    currentMenu = menu_editingLevelSelection
+    global current_menu
+    current_menu = menu_editing_level_selection
 
 
 def goto_menu_options() -> None:
-    global currentMenu
-    currentMenu = menu_options
+    global current_menu
+    current_menu = menu_options
 
 
-def goto_menu_levelSelection() -> None:
-    global currentMenu
-    currentMenu = menu_levelSelection
+def goto_menu_level_selection() -> None:
+    global current_menu
+    current_menu = menu_level_selection
 
 
 # Editing
 
 
-def editing_saveChanges() -> None:
-    currentMap.saveChanges()
+def editing_save_changes() -> None:
+    current_map.save_changes()
 
 
-def editing_changeBrush():
-    currentMap.changeBrush()
-    currentMenu.labels["brush"].changeText(currentMap.brush)
-    currentMenu.labels["brush"].changeBackground(COLORS[currentMap.brush])
+def editing_change_brush():
+    current_map.change_brush()
+    current_menu.labels["brush"].change_text(current_map.brush)
+    current_menu.labels["brush"].change_background(COLORS[current_map.brush])
 
 
-def editing_changeBrushMode():
-    currentMap.changeBrushMode()
+def editing_change_brush_mode():
+    current_map.change_brush_mode()
 
 
 def goto_edit(level_name: str) -> None:
-    global currentMap, currentMenu, gameStatus
-    currentMap = level.EditLevel(level_name)
-    currentMenu = menu_editing
-    gameStatus = 2
+    global current_map, current_menu, game_status
+    current_map = level.EditLevel(level_name)
+    current_menu = menu_editing
+    game_status = 2
 
 
 # Other
 
 
 def goto_game(level_name: str) -> None:
-    global gameStatus, currentMap, currentMenu, player, miniMap
-    currentMap = level.World(level_name)
-    miniMap = MiniMap(currentMap.matrix_terrain, (85, 0), 15, 150)
-    currentMenu = menu_inGame
-    player = entities.Player(coords=currentMap.spawn, maxHealth=100,
-                             maxSpeed=0.7, acceleration=0.01, weight=1,
-                             jumpStrength=1.5)
-    gameStatus = 1
+    global game_status, current_map, current_menu, player, mini_map
+    current_map = level.World(level_name)
+    mini_map = MiniMap(current_map.matrix_terrain, (85, 0), 15, 150)
+    current_menu = menu_in_game
+    player = entities.Player(coords=current_map.spawn, max_health=100,
+                             max_speed=0.7, acceleration=0.01, weight=1,
+                             jump_strength=1.5)
+    game_status = 1
 
 
-def changeLevel(level_name: str) -> None:
-    global currentMap, miniMap
-    currentMap = level.World(level_name)
-    miniMap = MiniMap(currentMap.matrix_terrain, (85, 0), 15, 150)
-    player.x, player.y = currentMap.spawn
+def change_level(level_name: str) -> None:
+    global current_map, mini_map
+    current_map = level.World(level_name)
+    mini_map = MiniMap(current_map.matrix_terrain, (85, 0), 15, 150)
+    player.x, player.y = current_map.spawn
 
 
 def apply_changes() -> None:
     """Save all settings"""
 
-    saveChanges(fps=fps, screen_resolution=screenRes,
+    save_changes(fps=fps, screen_resolution=screen_res,
                 volume=volume, sensitivity=sensitivity)
 
 
-def exitGame() -> None:
+def exit_game() -> None:
     apply_changes()
     quit()
 
 
-def update(surface: pygame.Surface, keyboardKeys: set, pressedKeys: set,
-           releasedKeys: set, mouseButtons: set, pressedButtons: set,
-           releasedButtons: set, mousePos: tuple,
+def update(surface: pygame.Surface, keyboard_keys: set, pressed_keys: set,
+           released_keys: set, mouse_buttons: set, pressed_buttons: set,
+           released_buttons: set, mouse_pos: tuple,
            clock: pygame.time.Clock, dt: float) -> None:
     """Game tick"""
 
-    if gameStatus == 1:
+    if game_status == 1:
         # surface.fill(BLACK)
-        currentMap.update(surface, dt, player)
+        current_map.update(surface, dt, player)
 
-        if pygame.K_w in keyboardKeys:
+        if pygame.K_w in keyboard_keys:
             player.jump()
-        if pygame.K_a in keyboardKeys:
-            player.moveLeft(dt)
-        if pygame.K_d in keyboardKeys:
-            player.moveRight(dt)
-        if pygame.K_1 in keyboardKeys:
+        if pygame.K_a in keyboard_keys:
+            player.move_left(dt)
+        if pygame.K_d in keyboard_keys:
+            player.move_right(dt)
+        if pygame.K_1 in keyboard_keys:
             player.changeSlot(0)
-        if pygame.K_2 in keyboardKeys:
+        if pygame.K_2 in keyboard_keys:
             player.changeSlot(1)
-        if pygame.K_3 in keyboardKeys:
+        if pygame.K_3 in keyboard_keys:
             player.changeSlot(2)
-        if pygame.K_4 in keyboardKeys:
+        if pygame.K_4 in keyboard_keys:
             player.changeSlot(3)
-        if pygame.K_5 in keyboardKeys:
+        if pygame.K_5 in keyboard_keys:
             player.changeSlot(4)
 
-        if pygame.BUTTON_LEFT in mouseButtons:
-            player.attack(mousePos)
+        if pygame.BUTTON_LEFT in mouse_buttons:
+            player.attack(mouse_pos)
 
-        player.update(currentMap.matrix_terrain,
-                      currentMap.matrix_triggers, surface, dt)
+        player.update(current_map.matrix_terrain,
+                      current_map.matrix_triggers, surface, dt)
         match player.triggered[2]:
             case "0":
                 pass
             case "CL":
-                changeLevel(currentMap.info["next"])
+                change_level(current_map.info["next"])
 
         # if player.triggered:
         #     match player.triggered[2]:
         #         case "1": screamer(surface)
-        miniMap.draw(surface)
-        currentMenu.labels["fps"].changeText(f"FPS: {round(clock.get_fps())}")
-        currentMenu.labels["health"].changeText(f"{player.health}+")
+        mini_map.draw(surface)
+        current_menu.labels["fps"].change_text(f"FPS: {round(clock.get_fps())}")
+        current_menu.labels["health"].change_text(f"{player.health}+")
 
-    elif gameStatus == 2:
-        currentMap.update(mousePos, surface)
+    elif game_status == 2:
+        current_map.update(mouse_pos, surface)
 
-        if pygame.BUTTON_LEFT in mouseButtons:
-            if pygame.BUTTON_LEFT in pressedButtons:
-                currentMap.setStartMousePos(mousePos)
-            currentMap.changeTile()
+        if pygame.BUTTON_LEFT in mouse_buttons:
+            if pygame.BUTTON_LEFT in pressed_buttons:
+                current_map.set_start_mouse_pos(mouse_pos)
+            current_map.change_tile()
         else:
-            if pygame.BUTTON_LEFT in releasedButtons:
-                currentMap.changeTile(False, True)
-        if pygame.BUTTON_RIGHT in mouseButtons:
-            if pygame.BUTTON_RIGHT in pressedButtons:
-                currentMap.setStartMousePos(mousePos)
-            currentMap.changeTile(True)
+            if pygame.BUTTON_LEFT in released_buttons:
+                current_map.change_tile(False, True)
+        if pygame.BUTTON_RIGHT in mouse_buttons:
+            if pygame.BUTTON_RIGHT in pressed_buttons:
+                current_map.set_start_mouse_pos(mouse_pos)
+            current_map.change_tile(True)
         else:
-            if pygame.BUTTON_RIGHT in releasedButtons:
-                currentMap.changeTile(True, True)
+            if pygame.BUTTON_RIGHT in released_buttons:
+                current_map.change_tile(True, True)
 
-    currentMenu.update(surface)
+    current_menu.update(surface)
 
 
 def init():
-    global gameStatus, currentMenu, menu_main, menu_editing, menu_options, \
-        menu_inGame, menu_levelSelection, menu_editingLevelSelection
+    global game_status, current_menu, menu_main, menu_editing, menu_options, \
+        menu_in_game, menu_level_selection, menu_editing_level_selection
 
     menu_main = Menu(
         "backgrounds/menu_main.png",
         buttons={
             Button((50, 25), (20, 13), BLACK, "PLAY", WHITE,
                    ("JosefinSans/JosefinSans-Bold.ttf", 60),
-                   DARK_GRAY, goto_menu_levelSelection),
+                   DARK_GRAY, goto_menu_level_selection),
             Button((50, 40), (25, 13), BLACK, "EDIT", WHITE,
                    ("JosefinSans/JosefinSans-Bold.ttf", 60),
                    DARK_GRAY, goto_menu_editing),
@@ -196,10 +196,10 @@ def init():
                    DARK_GRAY, goto_menu_options),
             Button((50, 70), (20, 13), BLACK, "EXIT", WHITE,
                    ("JosefinSans/JosefinSans-Bold.ttf", 60),
-                   DARK_GRAY, exitGame)
+                   DARK_GRAY, exit_game)
         }
     )
-    menu_levelSelection = Menu(
+    menu_level_selection = Menu(
         "backgrounds/menu_main.png",
         labels={
             "title": Label((50, 15), (80, 30), TRANSPARENT, "SELECT LEVEL",
@@ -209,12 +209,12 @@ def init():
             Button((9, 16), (16, 9), BLACK, "BACK", WHITE,
                    ("JosefinSans/JosefinSans-Bold.ttf", 30),
                    DARK_GRAY, goto_menu_main),
-            *makeButtonTable(15, 35, 1, 3, 5, 17, 25, 5, 10, BLACK, WHITE,
+            *make_button_table(15, 35, 1, 3, 5, 17, 25, 5, 10, BLACK, WHITE,
                              ("JosefinSans/JosefinSans-Bold.ttf", 30),
                              DARK_GRAY, goto_game, "test_*")
         }
     )
-    menu_editingLevelSelection = Menu(
+    menu_editing_level_selection = Menu(
         "backgrounds/menu_main.png",
         labels={
             "title": Label((50, 15), (80, 30), TRANSPARENT, "LEVEL EDITOR",
@@ -224,7 +224,7 @@ def init():
             Button((9, 16), (16, 9), BLACK, "BACK", WHITE,
                    ("JosefinSans/JosefinSans-Bold.ttf", 30),
                    DARK_GRAY, goto_menu_main),
-            *makeButtonTable(15, 35, 1, 3, 5, 17, 25, 5, 10, BLACK, WHITE,
+            *make_button_table(15, 35, 1, 3, 5, 17, 25, 5, 10, BLACK, WHITE,
                              ("JosefinSans/JosefinSans-Bold.ttf", 30),
                              DARK_GRAY, goto_edit, "test_*")
         }
@@ -238,12 +238,12 @@ def init():
         },
         buttons={
             Button((70, 25), (10, 10), (255, 255, 0, 100), "CHANGE BRUSH",
-                   BLUE, func=editing_changeBrush),
+                   BLUE, func=editing_change_brush),
             SwitchButton((30, 25), (10, 10), (255, 255, 0, 100), "PEN", BLUE,
                          (255, 255, 0), "FILLING", RED,
-                         func=editing_changeBrushMode),
+                         func=editing_change_brush_mode),
             Button((90, 10), (10, 10), (255, 255, 0, 100), "SAVE", BLUE,
-                   func=editing_saveChanges)
+                   func=editing_save_changes)
         }
     )
     menu_options = Menu(
@@ -262,7 +262,7 @@ def init():
             Slider((50, 50), (10, 5), 5, BLACK, "aboba", WHITE)
         }
     )
-    menu_inGame = Menu(
+    menu_in_game = Menu(
         labels={
             "health": Label((10, 90), (10, 10), TRANSPARENT,
                             "+100", LIGHT_GRAY,

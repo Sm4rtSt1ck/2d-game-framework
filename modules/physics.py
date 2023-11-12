@@ -11,7 +11,7 @@ FRICTION = {
 GRAVITY = 0.005
 
 
-def applyGravity(weight: float) -> float:
+def apply_gravity(weight: float) -> float:
     return GRAVITY * weight
 
 

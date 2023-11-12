@@ -7,8 +7,8 @@ TILESIZE = 16
 with open("settings/settings.json") as settings:
     settings = load_json(settings)
 
-screenRes = tuple(settings["screen_resolution"])
-screenCenter = screenRes[0] / 2, screenRes[1] / 2
+screen_res = tuple(settings["screen_resolution"])
+screen_center = screen_res[0] / 2, screen_res[1] / 2
 sensitivity = settings["sensitivity"]
 fps = settings["fps"]
 images_path = settings["images_path"]
@@ -18,7 +18,7 @@ level_when_game_started = settings["current_level"]
 fonts_path = settings["fonts_path"]
 
 
-def saveChanges(**parameters) -> None:
+def save_changes(**parameters) -> None:
     settings_updated = settings.copy()
     for parameter, value in parameters.items():
         settings_updated[parameter] = value
