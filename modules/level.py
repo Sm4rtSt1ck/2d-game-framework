@@ -2,6 +2,7 @@ import pygame
 from json import load as load_json
 from modules.parameters.parameters import TILESIZE, screen_res
 from modules.parameters.colors import COLORS
+from modules import entities
 
 
 class Level:
@@ -21,12 +22,14 @@ class Level:
 
     def load_matrix(self, name: str) -> list[list[str]]:
         """Create a matrix of a layer"""
+
         with open(self.path+"/"+name+".map", "r", encoding="utf-8") as f:
             return [row.split() for row in f.read().split("\n")]
 
     def create_surface(self, matrix: list[list[str]],
                       transparency: int = 100) -> pygame.Surface:
         """Create a surface of a layer"""
+
         surface = pygame.Surface(screen_res)
         surface.set_alpha(transparency)
         for row_index, row in enumerate(matrix):
@@ -34,8 +37,7 @@ class Level:
                 if tile == "0":
                     continue
                 x, y = col_index * TILESIZE, row_index * TILESIZE
-                pygame.draw.rect(surface, COLORS[tile],
-                                 (x, y, TILESIZE, TILESIZE))
+                pygame.draw.rect(surface, COLORS[tile], (x, y, TILESIZE, TILESIZE))
         return surface
 
     def update(self) -> None:
@@ -53,7 +55,7 @@ class World(Level):
 
     def spawnEntities(self, matrix: list):
         """Create an object of all entities in level"""
-        from modules import entities
+
         entities.idles.clear()
         entities.movables.clear()
         entities.bullets.clear()
@@ -80,32 +82,29 @@ class World(Level):
         super().update()
         # Bullets
         for bullet in self.entities.bullets:
-            bullet.update(self.matrix_terrain, self.matrix_triggers,
-                          self.surface, dt,
+            bullet.update(self.matrix_terrain, self.matrix_triggers, self.surface, dt,
                           {*self.entities.idles, *self.entities.movables,
                            *self.entities.characters, *self.entities.fighters})
         # Idles
         for idle in self.entities.idles:
             idle.update(dt, self.surface)
-            if not idle.alive:
+            if not idle.is_alive():
                 self.entities.idles.remove(idle)
         # Movables
         for movable in self.entities.movables:
-            movable.update(self.matrix_terrain,
-                           self.matrix_triggers, self.surface, dt)
-            if not movable.alive:
+            movable.update(self.matrix_terrain, self.matrix_triggers, self.surface, dt)
+            if not movable.is_alive():
                 self.entities.movables.remove(movable)
         # Characters
         for character in self.entities.characters:
-            character.update(self.matrix_terrain,
-                             self.matrix_triggers, self.surface, dt)
-            if not character.alive:
+            character.update(self.matrix_terrain, self.matrix_triggers, self.surface, dt)
+            if not character.is_alive():
                 self.entities.characters.remove(character)
         # Fighters
         for fighter in self.entities.fighters:
             fighter.update(self.matrix_terrain, self.matrix_triggers,
                            (player,), self.surface, dt)
-            if not fighter.alive:
+            if not fighter.is_alive():
                 self.entities.fighters.remove(fighter)
 
         surface.blit(self.surface, (0, 0))
@@ -144,16 +143,11 @@ class EditLevel(Level):
                  self.current_mouse_pos[1] * TILESIZE, TILESIZE, TILESIZE))
         elif self.brush_mode == 2:
             if apply:
-                for row_index in range(min(self.start_mouse_pos[1],
-                                          self.current_mouse_pos[1]),
-                                      max(self.start_mouse_pos[1],
-                                          self.current_mouse_pos[1])):
-                    for col_index in range(min(self.start_mouse_pos[0],
-                                              self.current_mouse_pos[0]),
-                                          max(self.start_mouse_pos[0],
-                                              self.current_mouse_pos[0])):
-                        self.current_matrix[row_index][col_index] =\
-                            "0" if clear else self.brush
+                for row_index in range(min(self.start_mouse_pos[1], self.current_mouse_pos[1]),
+                                      max(self.start_mouse_pos[1], self.current_mouse_pos[1])):
+                    for col_index in range(min(self.start_mouse_pos[0], self.current_mouse_pos[0]),
+                                          max(self.start_mouse_pos[0], self.current_mouse_pos[0])):
+                        self.current_matrix[row_index][col_index] = "0" if clear else self.brush
             pygame.draw.rect(
                 self.current_surface if apply else self.surface,
                 (0, 0, 0, 0) if clear else COLORS[self.brush],
@@ -171,14 +165,11 @@ class EditLevel(Level):
     def save_changes(self) -> None:
         """Save all changes to .map files"""
         with open(self.path+"/terrain.map", "w") as data:
-            data.write("\n".join(
-                [" ".join(row) for row in self.matrix_terrain]))
+            data.write("\n".join([" ".join(row) for row in self.matrix_terrain]))
         with open(self.path+"/entities.map", "w") as data:
-            data.write("\n".join(
-                [" ".join(row) for row in self.matrix_entities]))
+            data.write("\n".join([" ".join(row) for row in self.matrix_entities]))
         with open(self.path+"/triggers.map", "w") as data:
-            data.write("\n".join(
-                [" ".join(row) for row in self.matrix_triggers]))
+            data.write("\n".join([" ".join(row) for row in self.matrix_triggers]))
 
     def update(self, mouse_pos: tuple, surface: pygame.Surface) -> None:
         super().update()

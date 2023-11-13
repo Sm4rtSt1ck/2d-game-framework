@@ -129,15 +129,15 @@ def update(surface: pygame.Surface, keyboard_keys: set, pressed_keys: set,
         if pygame.K_d in keyboard_keys:
             player.move_right(dt)
         if pygame.K_1 in keyboard_keys:
-            player.changeSlot(0)
+            player.change_slot(0)
         if pygame.K_2 in keyboard_keys:
-            player.changeSlot(1)
+            player.change_slot(1)
         if pygame.K_3 in keyboard_keys:
-            player.changeSlot(2)
+            player.change_slot(2)
         if pygame.K_4 in keyboard_keys:
-            player.changeSlot(3)
+            player.change_slot(3)
         if pygame.K_5 in keyboard_keys:
-            player.changeSlot(4)
+            player.change_slot(4)
 
         if pygame.BUTTON_LEFT in mouse_buttons:
             player.attack(mouse_pos)
@@ -155,7 +155,7 @@ def update(surface: pygame.Surface, keyboard_keys: set, pressed_keys: set,
         #         case "1": screamer(surface)
         mini_map.draw(surface)
         current_menu.labels["fps"].change_text(f"FPS: {round(clock.get_fps())}")
-        current_menu.labels["health"].change_text(f"{player.health}+")
+        current_menu.labels["health"].change_text(f"{player.get_health()}+")
 
     elif game_status == 2:
         current_map.update(mouse_pos, surface)
