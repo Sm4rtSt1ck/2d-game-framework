@@ -24,7 +24,7 @@ class Label:
         self,
         coords: tuple,
         size: tuple,
-        color: tuple,
+        color: tuple[int, int, int, int],
         text: str = "",
         text_color: tuple = (255, 255, 255),
         font: tuple = font_default
@@ -41,6 +41,7 @@ class Label:
         self.text_color = text_color
 
         # Text
+        if font is None: font = font_default
         self.font = pygame.font.Font(fonts_path+font[0], font[1])
         self.text = self.font.render(text, False, self.text_color)
         self.text_pos = (
@@ -93,7 +94,7 @@ class Button(Label):
     ) -> None:
         super().__init__(coords, size, color, text, text_color, font)
 
-        self.func = func
+        self.func = func if func is not None else nothing
         self.args = args
         self.pressed: bool = False
 
@@ -119,17 +120,21 @@ class Button(Label):
 
 
 def make_button_table(
-    x: int, y: int,
-    range_start: int, range_end: int, cols: int,
-    col_distance: int, row_distance: int,
-    button_width: int, button_height: int,
+    coords: tuple[int, int],
+    range_limits: tuple[int, int], cols: int,
+    distances: tuple[int, int],
+    button_size: tuple[int, int],
     color: tuple,
     text_color: tuple, font: tuple = font_default,
     color2: tuple = None,
     func=nothing,
-    *args
+    args: tuple = ()
 ) -> list:
 
+    x, y = coords
+    range_start, range_end = range_limits
+    col_distance, row_distance = distances
+    button_width, button_height = button_size
     return ([
             Button((x + (button-1) % cols * col_distance,
                     y + (button-1) // cols * row_distance),
@@ -343,7 +348,7 @@ class MiniMap:
                 if tile == "0":
                     continue
                 coords = col_index * TILESIZE, row_index * TILESIZE
-                pygame.draw.rect(surface, COLORS[tile],
+                pygame.draw.rect(surface, COLORS_SHORT[tile],
                                  (*coords, TILESIZE, TILESIZE))
         return surface
 
@@ -355,8 +360,8 @@ class Menu:
     def __init__(
         self,
         background_path: str = None,
-        labels: dict = {},
-        buttons: set = set()
+        labels: dict[str, Label] = {},
+        buttons: set[Button] = set()
     ) -> None:
 
         self.labels = labels

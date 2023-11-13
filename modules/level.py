@@ -1,7 +1,7 @@
 import pygame
 from json import load as load_json
 from modules.parameters.parameters import TILESIZE, screen_res
-from modules.parameters.colors import COLORS
+from modules.parameters.colors import COLORS_SHORT
 from modules import entities
 
 
@@ -37,7 +37,7 @@ class Level:
                 if tile == "0":
                     continue
                 x, y = col_index * TILESIZE, row_index * TILESIZE
-                pygame.draw.rect(surface, COLORS[tile], (x, y, TILESIZE, TILESIZE))
+                pygame.draw.rect(surface, COLORS_SHORT[tile], (x, y, TILESIZE, TILESIZE))
         return surface
 
     def update(self) -> None:
@@ -127,9 +127,9 @@ class EditLevel(Level):
 
     def change_brush(self):
         """If I don't rewrite this method, I'll go f*ck myself"""
-        self.brush = tuple(COLORS.keys())[(
-            tuple(COLORS.keys()).index(self.brush) + 1
-            if tuple(COLORS.keys()).index(self.brush) != len(COLORS)-1 else 0)]
+        self.brush = tuple(COLORS_SHORT.keys())[(
+            tuple(COLORS_SHORT.keys()).index(self.brush) + 1
+            if tuple(COLORS_SHORT.keys()).index(self.brush) != len(COLORS_SHORT)-1 else 0)]
 
     def change_tile(self, clear: bool = False, apply: bool = False) -> None:
         """Uses pen or filling tool to change tiles with current brush"""
@@ -138,7 +138,7 @@ class EditLevel(Level):
                 = "0" if clear else self.brush
             pygame.draw.rect(
                 self.current_surface,
-                (0, 0, 0, 0) if clear else COLORS[self.brush],
+                (0, 0, 0, 0) if clear else COLORS_SHORT[self.brush],
                 (self.current_mouse_pos[0] * TILESIZE,
                  self.current_mouse_pos[1] * TILESIZE, TILESIZE, TILESIZE))
         elif self.brush_mode == 2:
@@ -150,7 +150,7 @@ class EditLevel(Level):
                         self.current_matrix[row_index][col_index] = "0" if clear else self.brush
             pygame.draw.rect(
                 self.current_surface if apply else self.surface,
-                (0, 0, 0, 0) if clear else COLORS[self.brush],
+                (0, 0, 0, 0) if clear else COLORS_SHORT[self.brush],
                 (min(self.start_mouse_pos[0], self.current_mouse_pos[0]) * TILESIZE,
                  min(self.start_mouse_pos[1], self.current_mouse_pos[1]) * TILESIZE,
                  abs(self.start_mouse_pos[0] - self.current_mouse_pos[0]) * TILESIZE,

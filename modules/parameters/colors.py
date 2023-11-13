@@ -17,7 +17,7 @@ BLACK = 0, 0, 0
 DARK_GRAY = 50, 50, 50
 LIGHT_GRAY = 150, 150, 150
 
-COLORS = {
+COLORS_SHORT = {
     "tr": TRANSPARENT,
     "wh": WHITE,
     "ba": BLACK,
@@ -37,4 +37,21 @@ COLORS = {
     "TF": RED,
     "TM": PURPLE,
     "CL": YELLOW
+}
+
+COLORS = {
+    "transparent": TRANSPARENT,
+    "white": WHITE,
+    "black": BLACK,
+    "red": RED,
+    "orange": ORANGE,
+    "yellow": YELLOW,
+    "green": GREEN,
+    "cyan": CYAN,
+    "blue": BLUE,
+    "purple": PURPLE,
+    "pink": PINK,
+    "brown": BROWN,
+    "dark_gray": DARK_GRAY,
+    "light_gray": LIGHT_GRAY
 }

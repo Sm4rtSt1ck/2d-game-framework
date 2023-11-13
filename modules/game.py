@@ -1,6 +1,5 @@
 import pygame
-from os import execv
-from sys import executable as sys_exec, argv as sys_argv
+from json import load as json_load
 from modules import entities, level
 from modules.interface import (Button, SwitchButton, Label, Menu, MiniMap,
                                Slider, make_button_table)
@@ -37,22 +36,22 @@ def goto_menu() -> None:
 
 def goto_menu_main() -> None:
     global current_menu
-    current_menu = menu_main
+    current_menu = menus["menu_main"]
 
 
 def goto_menu_editing() -> None:
     global current_menu
-    current_menu = menu_editing_level_selection
+    current_menu = menus["menu_editing_level_selection"]
 
 
 def goto_menu_options() -> None:
     global current_menu
-    current_menu = menu_options
+    current_menu = menus["menu_options"]
 
 
 def goto_menu_level_selection() -> None:
     global current_menu
-    current_menu = menu_level_selection
+    current_menu = menus["menu_level_selection"]
 
 
 # Editing
@@ -65,7 +64,7 @@ def editing_save_changes() -> None:
 def editing_change_brush():
     current_map.change_brush()
     current_menu.labels["brush"].change_text(current_map.brush)
-    current_menu.labels["brush"].change_background(COLORS[current_map.brush])
+    current_menu.labels["brush"].change_background(COLORS_SHORT[current_map.brush])
 
 
 def editing_change_brush_mode():
@@ -75,7 +74,7 @@ def editing_change_brush_mode():
 def goto_edit(level_name: str) -> None:
     global current_map, current_menu, game_status
     current_map = level.EditLevel(level_name)
-    current_menu = menu_editing
+    current_menu = menus["menu_editing"]
     game_status = 2
 
 
@@ -86,7 +85,7 @@ def goto_game(level_name: str) -> None:
     global game_status, current_map, current_menu, player, mini_map
     current_map = level.World(level_name)
     mini_map = MiniMap(current_map.matrix_terrain, (85, 0), 15, 150)
-    current_menu = menu_in_game
+    current_menu = menus["menu_in_game"]
     player = entities.Player(coords=current_map.spawn, max_health=100,
                              max_speed=0.7, acceleration=0.01, weight=1,
                              jump_strength=1.5)
@@ -179,98 +178,53 @@ def update(surface: pygame.Surface, keyboard_keys: set, pressed_keys: set,
 
 
 def init():
-    global game_status, current_menu, menu_main, menu_editing, menu_options, \
-        menu_in_game, menu_level_selection, menu_editing_level_selection
+    global game_status, current_menu, menus
 
-    menu_main = Menu(
-        "backgrounds/menu_main.png",
-        buttons={
-            Button((50, 25), (20, 13), BLACK, "PLAY", WHITE,
-                   ("JosefinSans/JosefinSans-Bold.ttf", 60),
-                   DARK_GRAY, goto_menu_level_selection),
-            Button((50, 40), (25, 13), BLACK, "EDIT", WHITE,
-                   ("JosefinSans/JosefinSans-Bold.ttf", 60),
-                   DARK_GRAY, goto_menu_editing),
-            Button((50, 55), (25, 13), BLACK, "OPTIONS", WHITE,
-                   ("JosefinSans/JosefinSans-Bold.ttf", 60),
-                   DARK_GRAY, goto_menu_options),
-            Button((50, 70), (20, 13), BLACK, "EXIT", WHITE,
-                   ("JosefinSans/JosefinSans-Bold.ttf", 60),
-                   DARK_GRAY, exit_game)
-        }
-    )
-    menu_level_selection = Menu(
-        "backgrounds/menu_main.png",
-        labels={
-            "title": Label((50, 15), (80, 30), TRANSPARENT, "SELECT LEVEL",
-                           BLACK, ("JosefinSans/JosefinSans-Bold.ttf", 100))
-        },
-        buttons={
-            Button((9, 16), (16, 9), BLACK, "BACK", WHITE,
-                   ("JosefinSans/JosefinSans-Bold.ttf", 30),
-                   DARK_GRAY, goto_menu_main),
-            *make_button_table(15, 35, 1, 3, 5, 17, 25, 5, 10, BLACK, WHITE,
-                             ("JosefinSans/JosefinSans-Bold.ttf", 30),
-                             DARK_GRAY, goto_game, "test_*")
-        }
-    )
-    menu_editing_level_selection = Menu(
-        "backgrounds/menu_main.png",
-        labels={
-            "title": Label((50, 15), (80, 30), TRANSPARENT, "LEVEL EDITOR",
-                           BLACK, ("JosefinSans/JosefinSans-Bold.ttf", 100))
-        },
-        buttons={
-            Button((9, 16), (16, 9), BLACK, "BACK", WHITE,
-                   ("JosefinSans/JosefinSans-Bold.ttf", 30),
-                   DARK_GRAY, goto_menu_main),
-            *make_button_table(15, 35, 1, 3, 5, 17, 25, 5, 10, BLACK, WHITE,
-                             ("JosefinSans/JosefinSans-Bold.ttf", 30),
-                             DARK_GRAY, goto_edit, "test_*")
-        }
-    )
-    menu_editing = Menu(
-        labels={
-            "matrix": Label((30, 15), (10, 5), (255, 255, 0, 100), "MATRIX",
-                            (60, 30, 85)),
-            "brush": Label((70, 15), (10, 5), (255, 255, 0, 100), "BRUSH",
-                           (60, 30, 85))
-        },
-        buttons={
-            Button((70, 25), (10, 10), (255, 255, 0, 100), "CHANGE BRUSH",
-                   BLUE, func=editing_change_brush),
-            SwitchButton((30, 25), (10, 10), (255, 255, 0, 100), "PEN", BLUE,
-                         (255, 255, 0), "FILLING", RED,
-                         func=editing_change_brush_mode),
-            Button((90, 10), (10, 10), (255, 255, 0, 100), "SAVE", BLUE,
-                   func=editing_save_changes)
-        }
-    )
-    menu_options = Menu(
-        "backgrounds/menu_main.png",
-        labels={
-            "title": Label((50, 15), (80, 30), TRANSPARENT, "OPTIONS", BLACK,
-                           ("JosefinSans/JosefinSans-Bold.ttf", 100))
-        },
-        buttons={
-            Button((9, 16), (16, 9), BLACK, "BACK", WHITE,
-                   ("JosefinSans/JosefinSans-Bold.ttf", 30),
-                   DARK_GRAY, goto_menu_main),
-            Button((50, 80), (16, 9), BLACK, "APPLY", WHITE,
-                   ("JosefinSans/JosefinSans-Bold.ttf", 50),
-                   DARK_GRAY, apply_changes),
-            Slider((50, 50), (10, 5), 5, BLACK, "aboba", WHITE)
-        }
-    )
-    menu_in_game = Menu(
-        labels={
-            "health": Label((10, 90), (10, 10), TRANSPARENT,
-                            "+100", LIGHT_GRAY,
-                            ("JosefinSans/JosefinSans-Bold.ttf", 60)),
-            "fps": Label((3, 3), (5, 5), TRANSPARENT,
-                         "FPS: 0", LIGHT_GRAY,
-                         ("JosefinSans/JosefinSans-Bold.ttf", 18))
-        }
-    )
+    menus = {}
+    with open("settings/layout.json") as layout:
+        layout = json_load(layout)
+        for menu_name, menu_data in layout.items():
+            menus[menu_name] = Menu(
+                background_path=menu_data["background_path"] if "background_path" in menu_data else None,
+                labels={
+                    name: Label(
+                        coords=data["coords"],
+                        size=data["size"],
+                        color=COLORS[data["color"]] if type(data["color"]).__name__  == "str" else data["color"],
+                        text=data["text"],
+                        text_color=COLORS[data["text_color"]] if type(data["text_color"]).__name__  == "str" else data["text_color"],
+                        font=data["font"] if "font" in data else None
+                    ) for name, data in menu_data['labels'].items()
+                } if "labels" in menu_data else {},
+                buttons={
+                    Button(
+                        coords=data["coords"],
+                        size=data["size"],
+                        color=COLORS[data["color"]] if type(data["color"]).__name__ == "str" else data["color"],
+                        text=data["text"],
+                        text_color=COLORS[data["text_color"]] if type(data["text_color"]).__name__ == "str" else data["text_color"],
+                        font=data["font"] if "font" in data else None,
+                        color2=COLORS[data["color2"]] if "color2" in data and type(data["color2"]).__name__ == "str" else data["color2"] if "color2" in data else None,
+                        func=globals()[data["function"]] if "function" in data else None
+                    ) for data in menu_data['buttons']
+                } if "buttons" in menu_data else {}
+            )
+            if "button_tables" in menu_data:
+                for button_table in range(len(menu_data["button_tables"])):
+                    data = menu_data["button_tables"][button_table]
+                    for button in make_button_table(
+                            coords=data["coords"],
+                            range_limits=data["range"],
+                            cols=data["cols"],
+                            distances=data["distances"],
+                            button_size=data["button_size"],
+                            color=COLORS[data["color"]] if type(data["color"]).__name__ == "str" else data["color"],
+                            text_color=COLORS[data["text_color"]] if type(data["text_color"]).__name__ == "str" else data["text_color"],
+                            font=data["font"],
+                            color2=COLORS[data["color2"]] if type(data["color2"]).__name__ == "str" else data["color2"],
+                            func=globals()[data["function"]],
+                            args=data["function_arguments"]
+                        ):
+                        menus[menu_name].buttons.add(button)
 
     goto_menu()
