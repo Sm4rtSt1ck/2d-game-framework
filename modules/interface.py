@@ -158,10 +158,10 @@ class SwitchButton(Button):
         text2_color: tuple = None,
         font: tuple = font_default,
         func=nothing,
-        *args
+        args: tuple = ()
     ) -> None:
         super().__init__(coords=coords, size=size, color=color, text=text,
-                         text_color=text_color, font=font, func=func, *args)
+                         text_color=text_color, font=font, func=func, args=args)
 
         self.activated: bool = False
 

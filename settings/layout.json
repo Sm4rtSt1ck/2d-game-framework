@@ -3,43 +3,27 @@
         "background_path": "backgrounds/menu_main.png",
         "buttons": [
             {
-                "coords": [50, 25],
-                "size": [20, 13],
-                "color": "black",
-                "text": "PLAY",
-                "text_color": "white",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
-                "color2": "dark_gray",
+                "coords": [50, 25], "size": [20, 13],
+                "text": "PLAY", "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
+                "color": "black", "color2": "dark_gray", "text_color": "white",
                 "function": "goto_menu_level_selection"
             },
             {
-                "coords": [50, 40],
-                "size": [25, 13],
-                "color": "black",
-                "text": "EDIT",
-                "text_color": "white",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
-                "color2": "dark_gray",
+                "coords": [50, 40], "size": [25, 13],
+                "text": "EDIT", "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
+                "color": "black", "color2": "dark_gray", "text_color": "white",
                 "function": "goto_menu_editing"
             },
             {
-                "coords": [50, 55],
-                "size": [25, 13],
-                "color": "black",
-                "text": "OPTIONS",
-                "text_color": "white",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
-                "color2": "dark_gray",
+                "coords": [50, 55], "size": [25, 13],
+                "text": "OPTIONS", "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
+                "color": "black", "color2": "dark_gray", "text_color": "white",
                 "function": "goto_menu_options"
             },
             {
-                "coords": [50, 70],
-                "size": [20, 13],
-                "color": "black",
-                "text": "EXIT",
-                "text_color": "white",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
-                "color2": "dark_gray",
+                "coords": [50, 70], "size": [20, 13],
+                "text": "EXIT", "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
+                "color": "black", "color2": "dark_gray", "text_color": "white",
                 "function": "exit_game"
             }
         ]
@@ -48,39 +32,27 @@
         "background_path": "backgrounds/menu_main.png",
         "labels": {
             "title": {
-                "coords": [50, 15],
-                "size": [80, 30],
-                "color": "transparent",
-                "text": "SELECT LEVEL",
-                "text_color": "black",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 100]
+                "coords": [50, 15], "size": [80, 30],
+                "text": "SELECT LEVEL", "font": ["JosefinSans/JosefinSans-Bold.ttf", 100],
+                "color": "transparent", "text_color": "black"
             }
         },
         "buttons": [
             {
-                "coords": [9, 16],
-                "size": [16, 9],
-                "color": "black",
-                "text": "BACK",
-                "text_color": "white",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
-                "color2": "dark_gray",
+                "coords": [9, 16], "size": [16, 9],
+                "text": "BACK", "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
+                "color": "black", "color2": "dark_gray", "text_color": "white",
                 "function": "goto_menu_main"
             }
         ],
         "button_tables": [
             {
-                "coords": [15, 35],
-                "range": [1, 3],
-                "cols": 5,
-                "distances": [17, 25],
+                "coords": [15, 35], "range": [1, 3],
+                "cols": 5, "distances": [17, 25],
                 "button_size": [5, 10],
-                "color": "black",
-                "text_color": "white",
                 "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
-                "color2": "dark_gray",
-                "function": "goto_game",
-                "function_arguments": ["test_*"]
+                "color": "black", "color2": "dark_gray", "text_color": "white",
+                "function": "goto_game", "function_arguments": ["test_*"]
             }
         ]
     },
@@ -88,84 +60,59 @@
         "background_path": "backgrounds/menu_main.png",
         "labels": {
             "title": {
-                "coords": [50, 15],
-                "size": [80, 30],
-                "color": "transparent",
-                "text": "SELECT LEVEL",
-                "text_color": "black",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 100]
+                "coords": [50, 15], "size": [80, 30],
+                "text": "SELECT LEVEL", "font": ["JosefinSans/JosefinSans-Bold.ttf", 100],
+                "color": "transparent", "text_color": "black"
             }
         },
         "buttons": [
             {
-                "coords": [9, 16],
-                "size": [16, 9],
-                "color": "black",
-                "text": "BACK",
-                "text_color": "white",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
-                "color2": "dark_gray",
+                "coords": [9, 16], "size": [16, 9],
+                "text": "BACK", "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
+                "color": "black", "color2": "dark_gray", "text_color": "white",
                 "function": "goto_menu_main"
             }
         ],
         "button_tables": [
             {
-                "coords": [15, 35],
-                "range": [1, 3],
-                "cols": 5,
-                "distances": [17, 25],
+                "coords": [15, 35], "range": [1, 3],
+                "cols": 5, "distances": [17, 25],
                 "button_size": [5, 10],
-                "color": "black",
-                "text_color": "white",
                 "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
-                "color2": "dark_gray",
-                "function": "goto_edit",
-                "function_arguments": ["test_*"]
+                "color": "black", "color2": "dark_gray", "text_color": "white",
+                "function": "goto_edit", "function_arguments": ["test_*"]
             }
         ]
     },
     "menu_editing": {
         "labels": {
             "matrix": {
-                "coords": [30, 15],
-                "size": [10, 5],
-                "color": [255, 255, 0, 100],
+                "coords": [30, 15], "size": [10, 5],
                 "text": "MATRIX",
-                "text_color": [60, 30, 85]
+                "color": [255, 255, 0, 100], "text_color": [60, 30, 85]
             },
             "brush": {
-                "coords": [70, 15],
-                "size": [10, 5],
-                "color": [255, 255, 0, 100],
+                "coords": [70, 15], "size": [10, 5],
                 "text": "BRUSH",
-                "text_color": [60, 30, 85]
+                "color": [255, 255, 0, 100], "text_color": [60, 30, 85]
             }
         },
         "buttons": [
             {
-                "coords": [70, 25],
-                "size": [10, 10],
-                "color": [255, 255, 0, 100],
+                "coords": [70, 25], "size": [10, 10],
                 "text": "CHANGE BRUSH",
-                "text_color": "blue",
+                "color": [255, 255, 0, 100], "text_color": "blue",
                 "function": "editing_change_brush"
             },
             {
-                "coords": [30, 25],
-                "size": [10, 10],
-                "color": [255, 255, 0, 100],
-                "text": "PEN",
-                "text_color": "blue",
-                "hover_text": "FILLING",
-                "hover_color": "red",
+                "coords": [30, 25], "size": [10, 10],
+                "text": "PEN", "text2": "FILLING",
+                "color": [255, 255, 0, 100], "color2": "red", "text_color": "blue",
                 "function": "editing_change_brush_mode"
             },
             {
-                "coords": [90, 10],
-                "size": [10, 10],
-                "color": [255, 255, 0, 100],
-                "text": "SAVE",
-                "text_color": "blue",
+                "coords": [90, 10], "size": [10, 10],
+                "text": "SAVE", "color": [255, 255, 0, 100], "text_color": "blue",
                 "function": "editing_save_changes"
             }
         ]
@@ -174,61 +121,42 @@
         "background_path": "backgrounds/menu_main.png",
         "labels": {
             "title": {
-                "coords": [50, 15],
-                "size": [80, 30],
-                "color": "transparent",
-                "text": "OPTIONS",
-                "text_color": "black",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 100]
+                "coords": [50, 15], "size": [80, 30],
+                "text": "OPTIONS", "font": ["JosefinSans/JosefinSans-Bold.ttf", 100],
+                "color": "transparent", "text_color": "black"
             }
         },
         "buttons": [
             {
-                "coords": [9, 16],
-                "size": [16, 9],
-                "color": "black",
-                "text": "BACK",
-                "text_color": "white",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
-                "color2": "dark_gray",
+                "coords": [9, 16], "size": [16, 9],
+                "text": "BACK", "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
+                "color": "black", "color2": "dark_gray", "text_color": "white",
                 "function": "goto_menu_main"
             },
             {
-                "coords": [50, 80],
-                "size": [16, 9],
-                "color": "black",
-                "text": "APPLY",
-                "text_color": "white",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 50],
-                "color2": "dark_gray",
+                "coords": [50, 80], "size": [16, 9],
+                "text": "APPLY", "font": ["JosefinSans/JosefinSans-Bold.ttf", 50],
+                "color": "black", "color2": "dark_gray", "text_color": "white",
                 "function": "apply_changes"
             },
             {
-                "coords": [50, 50],
-                "size": [10, 5],
-                "color": "black",
+                "coords": [50, 50], "size": [10, 5],
                 "text": "aboba",
-                "text_color": "white"
+                "color": "black", "text_color": "white"
             }
         ]
     },
     "menu_in_game": {
         "labels": {
             "health": {
-                "coords": [10, 90],
-                "size": [10, 10],
-                "color": "transparent",
-                "text": "+100",
-                "text_color": "light_gray",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 60]
+                "coords": [10, 90], "size": [10, 10],
+                "text": "+100", "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
+                "color": "transparent", "text_color": "light_gray"
             },
             "fps": {
-                "coords": [3, 3],
-                "size": [5, 5],
-                "color": "transparent",
-                "text": "FPS: 0",
-                "text_color": "light_gray",
-                "font": ["JosefinSans/JosefinSans-Bold.ttf", 18]
+                "coords": [3, 3], "size": [5, 5],
+                "text": "FPS: 0", "font": ["JosefinSans/JosefinSans-Bold.ttf", 18],
+                "color": "transparent", "text_color": "light_gray"
             }
         }
     }
