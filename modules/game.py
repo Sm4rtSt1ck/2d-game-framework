@@ -1,13 +1,12 @@
 import pygame
 from json import load as json_load
 from modules import entities, level
-from modules.interface import (Button, SwitchButton, Label, Menu, MiniMap,
-                               Slider, make_button_table)
+from modules.interface import \
+    Button, SwitchButton, Label, Menu, MiniMap, Slider, make_button_table
 from modules.parameters.colors import *
-from modules.parameters.parameters import (fps, images_path,
-                                           level_when_game_started, music_path,
-                                           save_changes, screen_center,
-                                           screen_res, sensitivity, volume)
+from modules.parameters.parameters import \
+    fps, images_path, level_when_game_started, music_path, save_changes, \
+        screen_center, screen_res, sensitivity, volume
 
 pygame.mixer.init()
 
@@ -185,14 +184,17 @@ def init():
         layout = json_load(layout)
         for menu_name, menu_data in layout.items():
             menus[menu_name] = Menu(
-                background_path=menu_data["background_path"] if "background_path" in menu_data else None,
+                background_path=menu_data["background_path"]
+                    if "background_path" in menu_data else None,
                 labels={
                     name: Label(
                         coords=data["coords"],
                         size=data["size"],
-                        color=COLORS[data["color"]] if type(data["color"]).__name__  == "str" else data["color"],
+                        color=COLORS[data["color"]]
+                            if isinstance(data["color"], str) else data["color"],
                         text=data["text"],
-                        text_color=COLORS[data["text_color"]] if type(data["text_color"]).__name__  == "str" else data["text_color"],
+                        text_color=COLORS[data["text_color"]]
+                            if isinstance(data["text_color"], str) else data["text_color"],
                         font=data["font"] if "font" in data else None
                     ) for name, data in menu_data['labels'].items()
                 } if "labels" in menu_data else {},
@@ -200,12 +202,17 @@ def init():
                     Button(
                         coords=data["coords"],
                         size=data["size"],
-                        color=COLORS[data["color"]] if type(data["color"]).__name__ == "str" else data["color"],
+                        color=COLORS[data["color"]]
+                            if isinstance(data["color"], str) else data["color"],
                         text=data["text"],
-                        text_color=COLORS[data["text_color"]] if type(data["text_color"]).__name__ == "str" else data["text_color"],
+                        text_color=COLORS[data["text_color"]]
+                            if isinstance(data["text_color"], str) else data["text_color"],
                         font=data["font"] if "font" in data else None,
-                        color2=COLORS[data["color2"]] if "color2" in data and type(data["color2"]).__name__ == "str" else data["color2"] if "color2" in data else None,
-                        func=globals()[data["function"]] if "function" in data else None
+                        color2=COLORS[data["color2"]]
+                            if "color2" in data and isinstance(data["color2"], str)
+                            else data["color2"] if "color2" in data else None,
+                        func=globals()[data["function"]]
+                            if "function" in data else None
                     ) for data in menu_data['buttons']
                 } if "buttons" in menu_data else {}
             )
@@ -218,10 +225,13 @@ def init():
                             cols=data["cols"],
                             distances=data["distances"],
                             button_size=data["button_size"],
-                            color=COLORS[data["color"]] if type(data["color"]).__name__ == "str" else data["color"],
-                            text_color=COLORS[data["text_color"]] if type(data["text_color"]).__name__ == "str" else data["text_color"],
+                            color=COLORS[data["color"]]
+                                if isinstance(data["color"], str) else data["color"],
+                            text_color=COLORS[data["text_color"]]
+                                if isinstance(data["text_color"], str) else data["text_color"],
                             font=data["font"],
-                            color2=COLORS[data["color2"]] if type(data["color2"]).__name__ == "str" else data["color2"],
+                            color2=COLORS[data["color2"]]
+                                if isinstance(data["color2"], str) else data["color2"],
                             func=globals()[data["function"]],
                             args=data["function_arguments"]
                         ):

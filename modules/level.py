@@ -144,9 +144,9 @@ class EditLevel(Level):
         elif self.brush_mode == 2:
             if apply:
                 for row_index in range(min(self.start_mouse_pos[1], self.current_mouse_pos[1]),
-                                      max(self.start_mouse_pos[1], self.current_mouse_pos[1])):
+                                       max(self.start_mouse_pos[1], self.current_mouse_pos[1])):
                     for col_index in range(min(self.start_mouse_pos[0], self.current_mouse_pos[0]),
-                                          max(self.start_mouse_pos[0], self.current_mouse_pos[0])):
+                                           max(self.start_mouse_pos[0], self.current_mouse_pos[0])):
                         self.current_matrix[row_index][col_index] = "0" if clear else self.brush
             pygame.draw.rect(
                 self.current_surface if apply else self.surface,
