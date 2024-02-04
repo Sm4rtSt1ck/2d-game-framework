@@ -86,8 +86,8 @@ def entity_collision(
 
     return (x_1 <= x_2 <= x_1 + width_1
             or x_1 <= x_2 + width_2 <= x_1 + width_2)\
-           and (y_1 <= y_2 <= y_1 + height_1
-                or y_1 <= y_2 + height_2 <= y_1 + height_2)
+        and (y_1 <= y_2 <= y_1 + height_1
+             or y_1 <= y_2 + height_2 <= y_1 + height_2)
 
 
 def entity_collision_pg(

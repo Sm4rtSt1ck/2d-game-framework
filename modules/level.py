@@ -27,7 +27,7 @@ class Level:
             return [row.split() for row in f.read().split("\n")]
 
     def create_surface(self, matrix: list[list[str]],
-                      transparency: int = 100) -> pygame.Surface:
+                       transparency: int = 100) -> pygame.Surface:
         """Create a surface of a layer"""
 
         surface = pygame.Surface(screen_res)

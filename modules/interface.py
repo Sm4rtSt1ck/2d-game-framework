@@ -90,7 +90,7 @@ class Button(Label):
         font: tuple = font_default,
         color2: tuple = None,
         func=nothing,
-        *args
+        args: tuple = ()
     ) -> None:
         super().__init__(coords, size, color, text, text_color, font)
 
@@ -140,7 +140,7 @@ def make_button_table(
                     y + (button-1) // cols * row_distance),
                    (button_width, button_height),
                    color, str(button), text_color, font, color2,
-                   func, args[0].replace("*", str(button)), *args[1:])
+                   func, (*args[:-1], args[-1].replace("*", str(button))))
             for button in range(range_start, range_end)
             ])
 

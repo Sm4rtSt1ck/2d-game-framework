@@ -1,24 +1,24 @@
 {
-    "menu_main": {
+    "main": {
         "background_path": "backgrounds/menu_main.png",
         "buttons": [
             {
                 "coords": [50, 25], "size": [20, 13],
                 "text": "PLAY", "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
                 "color": "black", "color2": "dark_gray", "text_color": "white",
-                "function": "goto_menu_level_selection"
+                "function": "goto_menu", "args": ["level_selection"]
             },
             {
                 "coords": [50, 40], "size": [25, 13],
                 "text": "EDIT", "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
                 "color": "black", "color2": "dark_gray", "text_color": "white",
-                "function": "goto_menu_editing"
+                "function": "goto_menu", "args": ["level_selection_editing"]
             },
             {
                 "coords": [50, 55], "size": [25, 13],
                 "text": "OPTIONS", "font": ["JosefinSans/JosefinSans-Bold.ttf", 60],
                 "color": "black", "color2": "dark_gray", "text_color": "white",
-                "function": "goto_menu_options"
+                "function": "goto_menu", "args": ["options"]
             },
             {
                 "coords": [50, 70], "size": [20, 13],
@@ -28,7 +28,7 @@
             }
         ]
     },
-    "menu_level_selection": {
+    "level_selection": {
         "background_path": "backgrounds/menu_main.png",
         "labels": {
             "title": {
@@ -42,7 +42,7 @@
                 "coords": [9, 16], "size": [16, 9],
                 "text": "BACK", "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
                 "color": "black", "color2": "dark_gray", "text_color": "white",
-                "function": "goto_menu_main"
+                "function": "goto_menu", "args": ["main"]
             }
         ],
         "button_tables": [
@@ -52,11 +52,11 @@
                 "button_size": [5, 10],
                 "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
                 "color": "black", "color2": "dark_gray", "text_color": "white",
-                "function": "goto_game", "function_arguments": ["test_*"]
+                "function": "goto_menu", "args": ["in_game", "test_*"]
             }
         ]
     },
-    "menu_editing_level_selection": {
+    "level_selection_editing": {
         "background_path": "backgrounds/menu_main.png",
         "labels": {
             "title": {
@@ -70,7 +70,7 @@
                 "coords": [9, 16], "size": [16, 9],
                 "text": "BACK", "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
                 "color": "black", "color2": "dark_gray", "text_color": "white",
-                "function": "goto_menu_main"
+                "function": "goto_menu", "args": ["main"]
             }
         ],
         "button_tables": [
@@ -80,11 +80,11 @@
                 "button_size": [5, 10],
                 "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
                 "color": "black", "color2": "dark_gray", "text_color": "white",
-                "function": "goto_edit", "function_arguments": ["test_*"]
+                "function": "goto_menu", "args": ["editing", "test_*"]
             }
         ]
     },
-    "menu_editing": {
+    "editing": {
         "labels": {
             "matrix": {
                 "coords": [30, 15], "size": [10, 5],
@@ -117,7 +117,7 @@
             }
         ]
     },
-    "menu_options": {
+    "options": {
         "background_path": "backgrounds/menu_main.png",
         "labels": {
             "title": {
@@ -131,7 +131,7 @@
                 "coords": [9, 16], "size": [16, 9],
                 "text": "BACK", "font": ["JosefinSans/JosefinSans-Bold.ttf", 30],
                 "color": "black", "color2": "dark_gray", "text_color": "white",
-                "function": "goto_menu_main"
+                "function": "goto_menu", "args": ["main"]
             },
             {
                 "coords": [50, 80], "size": [16, 9],
@@ -146,7 +146,7 @@
             }
         ]
     },
-    "menu_in_game": {
+    "in_game": {
         "labels": {
             "health": {
                 "coords": [10, 90], "size": [10, 10],

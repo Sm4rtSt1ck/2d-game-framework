@@ -18,43 +18,34 @@ current_map: level.Level
 
 # Menu
 
+def goto_menu(menu_name: str="main", level_name: str = None) -> None:
+    global game_status, current_map, current_menu, player, mini_map
+    if menu_name == "main":
 
-def goto_menu() -> None:
-    global game_status, current_map, current_menu
+        # sound_menu = pygame.mixer.Sound(music_path+"main_menu.wav")
+        # sound_menu.set_volume(volume)
+        # sound_menu.play()
 
-    # sound_menu = pygame.mixer.Sound(music_path+"main_menu.wav")
-    # sound_menu.set_volume(volume)
-    # sound_menu.play()
+        current_map = None
+        game_status = 0
+        pygame.mouse.set_visible(1)
 
-    current_map = None
-    game_status = 0
-    pygame.mouse.set_visible(1)
+    elif menu_name == "in_game":
+        current_map = level.World(level_name)
+        mini_map = MiniMap(current_map.matrix_terrain, (85, 0), 15, 150)
+        current_menu = menus["in_game"]
+        player = entities.Player(coords=current_map.spawn, max_health=100,
+                                 max_speed=0.7, acceleration=0.01, weight=1,
+                                 jump_strength=1.5)
+        game_status = 1
+    elif menu_name == "editing":
+        current_map = level.EditLevel(level_name)
+        game_status = 2
 
-    goto_menu_main()
-
-
-def goto_menu_main() -> None:
-    global current_menu
-    current_menu = menus["menu_main"]
-
-
-def goto_menu_editing() -> None:
-    global current_menu
-    current_menu = menus["menu_editing_level_selection"]
-
-
-def goto_menu_options() -> None:
-    global current_menu
-    current_menu = menus["menu_options"]
-
-
-def goto_menu_level_selection() -> None:
-    global current_menu
-    current_menu = menus["menu_level_selection"]
+    current_menu = menus[menu_name]
 
 
 # Editing
-
 
 def editing_save_changes() -> None:
     current_map.save_changes()
@@ -70,26 +61,7 @@ def editing_change_brush_mode():
     current_map.change_brush_mode()
 
 
-def goto_edit(level_name: str) -> None:
-    global current_map, current_menu, game_status
-    current_map = level.EditLevel(level_name)
-    current_menu = menus["menu_editing"]
-    game_status = 2
-
-
 # Other
-
-
-def goto_game(level_name: str) -> None:
-    global game_status, current_map, current_menu, player, mini_map
-    current_map = level.World(level_name)
-    mini_map = MiniMap(current_map.matrix_terrain, (85, 0), 15, 150)
-    current_menu = menus["menu_in_game"]
-    player = entities.Player(coords=current_map.spawn, max_health=100,
-                             max_speed=0.7, acceleration=0.01, weight=1,
-                             jump_strength=1.5)
-    game_status = 1
-
 
 def change_level(level_name: str) -> None:
     global current_map, mini_map
@@ -148,9 +120,6 @@ def update(surface: pygame.Surface, keyboard_keys: set, pressed_keys: set,
             case "CL":
                 change_level(current_map.info["next"])
 
-        # if player.triggered:
-        #     match player.triggered[2]:
-        #         case "1": screamer(surface)
         mini_map.draw(surface)
         current_menu.labels["fps"].change_text(f"FPS: {round(clock.get_fps())}")
         current_menu.labels["health"].change_text(f"{player.get_health()}+")
@@ -212,7 +181,8 @@ def init():
                             if "color2" in data and isinstance(data["color2"], str)
                             else data["color2"] if "color2" in data else None,
                         func=globals()[data["function"]]
-                            if "function" in data else None
+                            if "function" in data else None,
+                        args=data["args"] if "args" in data else ()
                     ) for data in menu_data['buttons']
                 } if "buttons" in menu_data else {}
             )
@@ -220,21 +190,21 @@ def init():
                 for button_table in range(len(menu_data["button_tables"])):
                     data = menu_data["button_tables"][button_table]
                     for button in make_button_table(
-                            coords=data["coords"],
-                            range_limits=data["range"],
-                            cols=data["cols"],
-                            distances=data["distances"],
-                            button_size=data["button_size"],
-                            color=COLORS[data["color"]]
-                                if isinstance(data["color"], str) else data["color"],
-                            text_color=COLORS[data["text_color"]]
-                                if isinstance(data["text_color"], str) else data["text_color"],
-                            font=data["font"],
-                            color2=COLORS[data["color2"]]
-                                if isinstance(data["color2"], str) else data["color2"],
-                            func=globals()[data["function"]],
-                            args=data["function_arguments"]
-                        ):
+                        coords=data["coords"],
+                        range_limits=data["range"],
+                        cols=data["cols"],
+                        distances=data["distances"],
+                        button_size=data["button_size"],
+                        color=COLORS[data["color"]]
+                            if isinstance(data["color"], str) else data["color"],
+                        text_color=COLORS[data["text_color"]]
+                            if isinstance(data["text_color"], str) else data["text_color"],
+                        font=data["font"],
+                        color2=COLORS[data["color2"]]
+                            if isinstance(data["color2"], str) else data["color2"],
+                        func=globals()[data["function"]],
+                        args=data["args"]
+                    ):
                         menus[menu_name].buttons.add(button)
 
     goto_menu()
