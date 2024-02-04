@@ -2,7 +2,7 @@ import pygame
 from math import sin, cos, degrees, atan2
 from modules import maths, weapons
 from modules.physics import *
-from modules.parameters.parameters import TILESIZE, images_path
+from modules.parameters.options import TILESIZE, images_path, FRICTION
 
 
 class SpriteSheet:

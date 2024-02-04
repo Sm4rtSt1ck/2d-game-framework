@@ -1,15 +1,6 @@
 from pygame import Rect
 from math import floor
-from modules.parameters.parameters import TILESIZE
-
-
-GRAVITY = 0.005
-FRICTION = {
-    "0": 1,
-    "gr": 0.95,
-    "pu": 0.95,
-    "ye": 0.95
-}
+from modules.parameters.options import TILESIZE, GRAVITY
 
 
 def apply_gravity(weight: float) -> float:

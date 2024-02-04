@@ -1,6 +1,6 @@
 import pygame
 from json import load as load_json
-from modules.parameters.parameters import TILESIZE, screen_res
+from modules.parameters.options import TILESIZE, screen_res
 from modules.parameters.colors import COLORS_SHORT
 from modules import entities
 

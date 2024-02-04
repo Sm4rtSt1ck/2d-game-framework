@@ -1,6 +1,6 @@
 import pygame
 from modules import entities
-from modules.parameters.parameters import images_path
+from modules.parameters.options import images_path
 
 
 class ColdWeapon:

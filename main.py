@@ -1,12 +1,12 @@
 import pygame
 from modules import game
-from modules.parameters.parameters import screen_res, fps
+from modules.parameters.options import screen_res, fps, title, icon_path
 
 
 running = True
 clock = pygame.time.Clock()
-pygame.display.set_icon(pygame.image.load("resources/icon.ico"))
-pygame.display.set_caption("2D Game Engine")
+pygame.display.set_icon(pygame.image.load(icon_path))
+pygame.display.set_caption(title)
 screen = pygame.display.set_mode(screen_res)
 mouse_pos = pygame.mouse.get_pos()
 mouse_buttons = set()

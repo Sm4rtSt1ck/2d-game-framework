@@ -4,7 +4,7 @@ from modules import entities, level
 from modules.interface import \
     Button, SwitchButton, Label, Menu, MiniMap, Slider, make_button_table
 from modules.parameters.colors import *
-from modules.parameters.parameters import \
+from modules.parameters.options import \
     fps, images_path, level_when_game_started, music_path, save_changes, \
         screen_center, screen_res, sensitivity, volume
 

@@ -1,6 +1,6 @@
 import pygame
 from modules.parameters.colors import *
-from modules.parameters.parameters import (TILESIZE, images_path, screen_res,
+from modules.parameters.options import (TILESIZE, images_path, screen_res,
                                            fonts_path)
 
 pygame.font.init()

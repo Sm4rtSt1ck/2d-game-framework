@@ -1,0 +1,10 @@
+{
+    "tilesize": 16,
+
+    "title": "2D Game Engine",
+
+    "images_path": "resources/images/",
+    "fonts_path": "resources/fonts/",
+    "music_path": "resources/music/",
+    "icon": "resources/icon.ico"
+}

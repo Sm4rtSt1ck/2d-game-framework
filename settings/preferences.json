@@ -9,8 +9,5 @@
     "render_distance": 1000,
     "sensitivity": 0.0021,
     "volume": 0.1,
-    "current_level": "test_1",
-    "images_path": "resources/images/",
-    "fonts_path": "resources/fonts/",
-    "music_path": "resources/music/"
+    "current_level": "test_1"
 }

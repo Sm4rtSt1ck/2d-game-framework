@@ -1,6 +1,6 @@
 import pygame
 from math import sin
-from modules.parameters.parameters import fonts_path
+from modules.parameters.options import fonts_path
 
 pygame.mixer.init()
 pygame.font.init()
